@@ -1,1 +1,527 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أدوات ذكية لتدريب مستدام - لوحة الاتفاقية التفاعلية</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f4ff',
+                            100: '#d9e2ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        success: {
+                            500: '#10b981',
+                            600: '#059669',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.3);
+        }
+        .active-glow {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        /* Sticky Note Styles */
+        .sticky-note {
+            transition: all 0.2s ease;
+        }
+        .sticky-note:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            z-index: 10;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen pb-20 overflow-x-hidden">
+
+    <!-- Header Banner -->
+    <header class="relative overflow-hidden py-16 px-4 mb-8 border-b border-white/5 bg-slate-950/40">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-500/15 via-transparent to-transparent"></div>
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 mb-4 animate-pulse-slow">
+                <i class="fa-solid fa-graduation-cap"></i> لوحة اتفاقية التدريب التفاعلية
+            </span>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 tracking-wide leading-normal md:leading-normal">
+                أدوات ذكية لتدريب مستدام
+            </h1>
+            <p class="text-lg md:text-xl text-slate-300 mt-4 max-w-2xl mx-auto font-light">
+                مرحباً بك في رحلتك المعرفية الشيقة. التزامك ببنود هذه الاتفاقية يضمن لك ولزملائك بيئة تعليمية ملهمة ومثمرة.
+            </p>
+            <div class="mt-6 flex flex-wrap justify-center gap-4">
+                <div class="px-6 py-2.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 rounded-2xl font-bold text-sm shadow-lg shadow-emerald-500/5 animate-bounce-slow">
+                    <i class="fa-solid fa-sparkles ml-1"></i> التزامك سر تقدمك !
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 space-y-12">
+
+        <!-- Live Progress Dashboard -->
+        <section class="glass-card rounded-3xl p-6 md:p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl"></div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                <div class="text-right space-y-2">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-blue-400"></i> مؤشر مستوى الالتزام الشخصي
+                    </h2>
+                    <p class="text-slate-400 text-sm max-w-md">
+                        قم بقراءة بنود الاتفاقية السبعة أدناه، والموافقة عليها لتفعيل عداد الالتزام وتأكيد جديتك بالبرنامج التدريبي.
+                    </p>
+                </div>
+                <!-- Progress Circular/Linear Counter -->
+                <div class="w-full md:w-80 space-y-2">
+                    <div class="flex justify-between text-sm font-semibold text-slate-300">
+                        <span>نسبة الإقرار بالميثاق</span>
+                        <span id="progress-percent" class="text-emerald-400 text-lg font-bold">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-4 overflow-hidden p-0.5 border border-slate-700/50">
+                        <div id="progress-bar" class="bg-gradient-to-l from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-slate-400 mt-2">
+                        <i class="fa-solid fa-info-circle text-indigo-400"></i>
+                        <span id="progress-status">بانتظار قراءتك للاتفاقية وتأكيد البنود...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Agreement Cards Grid -->
+        <section class="space-y-6">
+            <div class="text-right">
+                <h3 class="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-indigo-400"></i> بنود الاتفاقية السبعة (أقرّ وألتزم)
+                </h3>
+                <p class="text-slate-400 text-sm mt-1">انقر على "ألتزم بالبند" بعد قراءة وفهم كل قاعدة مشاركة في اللوحة.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="agreement-cards-container">
+                <!-- Cards will be populated dynamically by JS for maintainability, layout control and dynamic interaction -->
+            </div>
+        </section>
+
+        <!-- Dynamic Whiteboard / Pledge Wall -->
+        <section class="glass-card rounded-3xl p-6 md:p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form Column -->
+                <div class="lg:col-span-1 space-y-4 text-right">
+                    <div class="space-y-1">
+                        <h3 class="text-xl md:text-2xl font-bold text-white">جدار العهد والمشاركة 📌</h3>
+                        <p class="text-slate-400 text-sm">شاركنا بعهدك التدريبي الخاص، أو كلمة ملهمة لزملائك ليتم تعليقها على اللوحة التفاعلية فوراً.</p>
+                    </div>
+                    <form id="pledge-form" class="space-y-4 pt-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">اسمك الكريم / لقبك</label>
+                            <input type="text" id="pledge-author" required placeholder="مثال: المدرب محمد أو المتدربة سارة" class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">عهدك أو توقعك التدريبي</label>
+                            <textarea id="pledge-text" required rows="3" placeholder="أعدكم بالالتزام التام ونقل الأثر التدريبي للجميع..." class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">اختر لون الملاحظة</label>
+                            <div class="flex gap-2">
+                                <button type="button" data-color="yellow" class="color-picker-btn w-8 h-8 rounded-full bg-yellow-200 border-2 border-white focus:outline-none ring-2 ring-transparent ring-offset-2 ring-offset-slate-900" style="background-color: #fef08a;"></button>
+                                <button type="button" data-color="cyan" class="color-picker-btn w-8 h-8 rounded-full bg-cyan-200 border-2 border-transparent focus:outline-none" style="background-color: #a5f3fc;"></button>
+                                <button type="button" data-color="pink" class="color-picker-btn w-8 h-8 rounded-full bg-pink-200 border-2 border-transparent focus:outline-none" style="background-color: #fbcfe8;"></button>
+                                <button type="button" data-color="emerald" class="color-picker-btn w-8 h-8 rounded-full bg-emerald-200 border-2 border-transparent focus:outline-none" style="background-color: #a7f3d0;"></button>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-500/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> علّق عهدك على الجدار
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Board Column -->
+                <div class="lg:col-span-2 bg-slate-950/50 border border-white/5 rounded-2xl p-6 min-h-[350px] relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+                    <div class="relative z-10 flex justify-between items-center border-b border-white/5 pb-3 mb-4">
+                        <span class="text-xs text-slate-400 font-semibold"><i class="fa-solid fa-circle text-emerald-500 text-[8px] animate-pulse"></i> لوحة المشاركات الحية للمجموعة</span>
+                        <button id="clear-notes-btn" class="text-xs text-rose-400 hover:text-rose-300 transition-colors"><i class="fa-solid fa-trash"></i> مسح الملاحظات الخاصة بي</button>
+                    </div>
+
+                    <!-- Notes Grid Container -->
+                    <div id="notes-grid" class="relative grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto max-h-[350px] p-2">
+                        <!-- Dynamic notes added here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Notification Toast for interactive feedback -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 glass-card text-white px-6 py-4 rounded-2xl flex items-center gap-3 border-l-4">
+        <span id="toast-icon" class="text-xl"></span>
+        <div class="text-right">
+            <h4 id="toast-title" class="font-bold text-sm"></h4>
+            <p id="toast-message" class="text-xs text-slate-300 mt-0.5"></p>
+        </div>
+    </div>
+
+    <!-- Scripting Interactions -->
+    <script>
+        // --- Core Application State & Data ---
+        const agreementRules = [
+            {
+                id: 1,
+                title: "الالتزام بالحضور في المواعيد المحددة",
+                desc: "الحضور المبكر والالتزام التام بجدول التدريب اليومي لتحقيق أقصى استفادة واحتراماً للوقت المخصص للمشاركين.",
+                icon: "fa-regular fa-clock",
+                color: "from-blue-500/20 to-indigo-500/10",
+                borderGlow: "group-hover:border-blue-500/40"
+            },
+            {
+                id: 2,
+                title: "المشاركة الفاعلة في الأنشطة والمناقشات",
+                desc: "المساهمة الإيجابية ومشاركة الأفكار والخبرات الغنية مع الزملاء والمدرب لبناء مساحات تعلم غنية وعملية.",
+                icon: "fa-solid fa-comments",
+                color: "from-indigo-500/20 to-purple-500/10",
+                borderGlow: "group-hover:border-indigo-500/40"
+            },
+            {
+                id: 3,
+                title: "احترام آراء الآخرين وتشجيع الحوار البناء",
+                desc: "تقبل وجهات النظر المختلفة والتفاعل بأسلوب راقٍ ومهني، ودعم التنوع الفكري بوصفه قيمة حقيقية للتطوير.",
+                icon: "fa-solid fa-handshake-angle",
+                color: "from-purple-500/20 to-pink-500/10",
+                borderGlow: "group-hover:border-purple-500/40"
+            },
+            {
+                id: 4,
+                title: "أدوات ذكية لتدريب مستدام",
+                desc: "توظيف الأدوات الرقمية الحديثة والمنصات الذكية لتعزيز استدامة التعلم والتدريب وتحويل المعرفة لخطوات تنفيذية.",
+                icon: "fa-solid fa-laptop-code",
+                color: "from-pink-500/20 to-rose-500/10",
+                borderGlow: "group-hover:border-pink-500/40"
+            },
+            {
+                id: 5,
+                title: "التعبير عن الآراء في حدود موضوع التدريب",
+                desc: "التركيز على محاور البرنامج التدريبي وتجنب النقاشات الجانبية الخارجة عن السياق لضمان جودة استهلاك وقت الجلسة.",
+                icon: "fa-solid fa-bullhorn",
+                color: "from-rose-500/20 to-orange-500/10",
+                borderGlow: "group-hover:border-rose-500/40"
+            },
+            {
+                id: 6,
+                title: "تنفيذ الأنشطة و التكليفات التدريبية",
+                desc: "العمل بجدية وشغف على كافة التطبيقات العملية والمشاريع الفردية والجماعية المطلوبة لإثبات ونمو مهاراتك الفعلية.",
+                icon: "fa-solid fa-award",
+                color: "from-orange-500/20 to-amber-500/10",
+                borderGlow: "group-hover:border-orange-500/40"
+            },
+            {
+                id: 7,
+                title: "عدم استخدام الأجهزة في غير غرض التدريب",
+                desc: "إبقاء تركيزك الكامل منصباً على رحلة التعلم الحالية، وتجنب تشتيت العقل بالرسائل الجانبية أو التصفح الخارجي.",
+                icon: "fa-solid fa-mobile-screen-button",
+                color: "from-emerald-500/20 to-teal-500/10",
+                borderGlow: "group-hover:border-emerald-500/40"
+            }
+        ];
+
+        // --- DOM Elements ---
+        const cardsContainer = document.getElementById('agreement-cards-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressStatus = document.getElementById('progress-status');
+
+        // Sticky notes elements
+        const pledgeForm = document.getElementById('pledge-form');
+        const pledgeAuthor = document.getElementById('pledge-author');
+        const pledgeText = document.getElementById('pledge-text');
+        const notesGrid = document.getElementById('notes-grid');
+        const clearNotesBtn = document.getElementById('clear-notes-btn');
+
+        // Global State variables
+        let committedRules = new Set();
+        let selectedNoteColor = 'yellow';
+        let personalNotes = [];
+
+        // --- Toast System (No Alerts!) ---
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastTitle = document.getElementById('toast-title');
+            const toastMessage = document.getElementById('toast-message');
+
+            toastTitle.innerText = title;
+            toastMessage.innerText = message;
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 glass-card text-white px-6 py-4 rounded-2xl flex items-center gap-3 border-l-4 border-emerald-500 shadow-xl shadow-emerald-500/10";
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 glass-card text-white px-6 py-4 rounded-2xl flex items-center gap-3 border-l-4 border-rose-500 shadow-xl shadow-rose-500/10";
+            } else {
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-info text-amber-400"></i>';
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 glass-card text-white px-6 py-4 rounded-2xl flex items-center gap-3 border-l-4 border-amber-500 shadow-xl shadow-amber-500/10";
+            }
+
+            // Remove/hide after 4 seconds
+            setTimeout(() => {
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 glass-card text-white px-6 py-4 rounded-2xl flex items-center gap-3 border-l-4";
+            }, 4000);
+        }
+
+        // --- STREAMING_CHUNK: Rendering agreement cards and handling interactive states... ---
+        // Render 7 Agreement Cards Dynamically
+        function renderAgreementCards() {
+            cardsContainer.innerHTML = '';
+            agreementRules.forEach(rule => {
+                const isCommitted = committedRules.has(rule.id);
+                const card = document.createElement('div');
+                card.id = `rule-card-${rule.id}`;
+                card.className = `group glass-card rounded-2xl p-6 flex flex-col justify-between text-right relative overflow-hidden ${isCommitted ? 'active-glow bg-emerald-950/20 border-emerald-500/40' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br ${rule.color} rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
+                    <div class="relative z-10 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <span class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl font-bold border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                ${rule.id}
+                            </span>
+                            <span class="text-xs text-indigo-300 font-semibold bg-indigo-500/5 px-2 py-1 rounded border border-indigo-500/10">بند التدريب</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-100 group-hover:text-white transition-colors">
+                            <i class="${rule.icon} text-indigo-400 ml-1"></i> ${rule.title}
+                        </h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">${rule.desc}</p>
+                    </div>
+
+                    <div class="relative z-10 pt-4 mt-4 border-t border-white/5 flex items-center justify-between">
+                        <span class="text-xs ${isCommitted ? 'text-emerald-400' : 'text-slate-400'} font-semibold" id="card-status-text-${rule.id}">
+                            ${isCommitted ? '<i class="fa-solid fa-circle-check"></i> تم التعهد بنجاح' : '<i class="fa-solid fa-circle-info"></i> لم يتم التعهد بعد'}
+                        </span>
+                        <button onclick="toggleRuleCommitment(${rule.id})" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${isCommitted ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 hover:bg-emerald-600' : 'bg-indigo-600/30 hover:bg-indigo-600 text-slate-200 hover:text-white border border-indigo-500/30'}">
+                            ${isCommitted ? 'ملتزم <i class="fa-solid fa-check"></i>' : 'أقر بالالتزام'}
+                        </button>
+                    </div>
+                `;
+                cardsContainer.appendChild(card);
+            });
+        }
+
+        // Toggle state of Rule commitment
+        window.toggleRuleCommitment = function(ruleId) {
+            if (committedRules.has(ruleId)) {
+                committedRules.delete(ruleId);
+                showToast("إزالة الإقرار", `لقد تراجعت عن الإقرار بالبند رقم (${ruleId})`, "info");
+            } else {
+                committedRules.add(ruleId);
+                showToast("إقرار العهد بنجاح", `لقد التزمت رسمياً بالبند: ${agreementRules.find(r => r.id === ruleId).title}`, "success");
+                // Celebrate only on individual commitment for high-impact interactivity!
+                confetti({
+                    particleCount: 30,
+                    spread: 60,
+                    origin: { y: 0.8 }
+                });
+            }
+            updateProgress();
+            renderAgreementCards();
+        }
+
+        // Update Overall Progress indicators
+        function updateProgress() {
+            const total = agreementRules.length;
+            const current = committedRules.size;
+            const percentage = Math.round((current / total) * 100);
+
+            progressBar.style.width = `${percentage}%`;
+            progressPercent.innerText = `${percentage}%`;
+
+            if (percentage === 0) {
+                progressStatus.innerHTML = '<i class="fa-solid fa-hourglass text-indigo-400"></i> بانتظار قراءتك للاتفاقية وتأكيد البنود...';
+            } else if (percentage < 50) {
+                progressStatus.innerHTML = '<i class="fa-solid fa-battery-quarter text-amber-400"></i> بداية جيدة! استمر بقراءة البنود والالتزام بها.';
+            } else if (percentage < 100) {
+                progressStatus.innerHTML = '<i class="fa-solid fa-battery-half text-blue-400"></i> لقد قطعت أكثر من نصف الطريق نحو التعهد الشامل!';
+            } else {
+                progressStatus.innerHTML = '<i class="fa-solid fa-award text-emerald-400 animate-bounce"></i> رائع! لقد وافقت على ميثاق الالتزام بالكامل. بارك الله في عهدك.';
+                // Big celebratory splash when 100% is reached
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        // --- STREAMING_CHUNK: Implementing Interactive Pledge Sticky Notes Board... ---
+        // Load initial virtual sticky notes
+        const defaultNotes = [
+            { id: 1, author: "المدرب القدير", text: "أعدكم ببيئة تدريب ملهمة تدعم شغف التطوير والابتكار المستدام في البرنامج.", color: "yellow", rot: -2 },
+            { id: 2, author: "المتدرب طلال", text: "سأكون أول الملتزمين بمواعيد الحضور والمشاركة الفاعلة اليوم.", color: "cyan", rot: 3 },
+            { id: 3, author: "منى العتيبي", text: "احترام آراء زملائي يثري خبرتي وفهمي، أنا ملتزمة بكل شغف.", color: "pink", rot: -1 }
+        ];
+
+        function initStickyNotes() {
+            // Read from local storage if available, otherwise use defaults
+            const saved = localStorage.getItem('training_pledges_v1');
+            if (saved) {
+                personalNotes = JSON.parse(saved);
+            } else {
+                personalNotes = [...defaultNotes];
+            }
+            renderStickyNotes();
+        }
+
+        function renderStickyNotes() {
+            notesGrid.innerHTML = '';
+            personalNotes.forEach(note => {
+                const noteDiv = document.createElement('div');
+                const colorClasses = {
+                    yellow: 'bg-yellow-200 text-yellow-950 border-yellow-300',
+                    cyan: 'bg-cyan-200 text-cyan-950 border-cyan-300',
+                    pink: 'bg-pink-200 text-pink-950 border-pink-300',
+                    emerald: 'bg-emerald-200 text-emerald-950 border-emerald-300'
+                };
+                
+                noteDiv.className = `sticky-note ${colorClasses[note.color] || colorClasses.yellow} border-2 rounded-xl p-4 shadow-md text-right relative flex flex-col justify-between min-h-[140px]`;
+                noteDiv.style.transform = `rotate(${note.rot || 0}deg)`;
+                
+                noteDiv.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold opacity-60"><i class="fa-solid fa-quote-right"></i> عهد مشارك</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-900/40"></span>
+                        </div>
+                        <p class="text-xs font-semibold leading-relaxed overflow-hidden text-ellipsis">${note.text}</p>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-slate-900/10 flex justify-between items-center">
+                        <span class="text-[10px] font-black tracking-wide">— ${note.author}</span>
+                        <i class="fa-solid fa-thumbtack text-slate-800/30 text-xs"></i>
+                    </div>
+                `;
+                notesGrid.appendChild(noteDiv);
+            });
+        }
+
+        // Color picking in Sticky note form
+        const colorBtns = document.querySelectorAll('.color-picker-btn');
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Clear active ring state on all color pickers
+                colorBtns.forEach(b => b.classList.remove('border-white', 'ring-2', 'ring-offset-2', 'ring-offset-slate-900'));
+                colorBtns.forEach(b => b.classList.add('border-transparent'));
+                
+                // Add active state to selected button
+                this.classList.remove('border-transparent');
+                this.classList.add('border-white', 'ring-2', 'ring-offset-2', 'ring-offset-slate-900');
+                selectedNoteColor = this.getAttribute('data-color');
+            });
+        });
+
+        // Submit custom sticky note
+        pledgeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = pledgeText.value.trim();
+            const author = pledgeAuthor.value.trim();
+
+            if (!text || !author) return;
+
+            // Random rotation between -4deg and +4deg for authentic whiteboard physical feel
+            const rot = Math.floor(Math.random() * 9) - 4; 
+
+            const newNote = {
+                id: Date.now(),
+                author,
+                text,
+                color: selectedNoteColor,
+                rot
+            };
+
+            personalNotes.unshift(newNote); // Put newest at start
+            localStorage.setItem('training_pledges_v1', JSON.stringify(personalNotes));
+            
+            pledgeText.value = '';
+            pledgeAuthor.value = '';
+            
+            renderStickyNotes();
+            showToast("تم تعليق عهدك بنجاح 📌", "ملاحظتك اللاصقة تظهر الآن على جدار المتدربين العام أمام زملائك.", "success");
+            
+            confetti({
+                particleCount: 50,
+                spread: 40,
+                origin: { y: 0.9 }
+            });
+        });
+
+        // Clear notes
+        clearNotesBtn.addEventListener('click', function() {
+            personalNotes = [...defaultNotes];
+            localStorage.setItem('training_pledges_v1', JSON.stringify(personalNotes));
+            renderStickyNotes();
+            showToast("إعادة تهيئة اللوحة", "تمت إعادة جدار الالتزام والمشاركات إلى وضعه الافتراضي بنجاح.", "info");
+        });
+
+        // --- Initialize Page Everything ---
+        window.onload = function() {
+            renderAgreementCards();
+            updateProgress();
+            initStickyNotes();
+        };
+    </script>
+</body>
+</html>
