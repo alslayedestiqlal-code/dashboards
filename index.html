@@ -739,18 +739,21 @@
 
         <!-- شريط التحكم والتنقل السفلي الثابت للحقيبة التدريبية -->
         <div id="bottom-navbar" class="h-[70px] bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4 md:px-8 z-15 flex-shrink-0">
-            <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="prev-btn" onclick="prevSlide()">
-                <i class="fa-solid fa-arrow-right"></i> <span class="hidden sm:inline">السابق</span>
-            </button>
             <div class="flex items-center gap-3">
                 <button class="bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 p-2.5 rounded-lg text-xs" title="الصفحة الرئيسية" onclick="goToSlide(0)">
                     <i class="fa-solid fa-house"></i>
                 </button>
                 <div class="slide-counter text-slate-400 text-xs font-bold tracking-wide" id="slide-counter">الشريحة 1 من 16</div>
             </div>
-            <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="next-btn" onclick="nextSlide()">
-                <span class="hidden sm:inline">التالي</span> <i class="fa-solid fa-arrow-left"></i>
-            </button>
+            
+            <div class="flex items-center gap-2">
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="prev-btn" onclick="prevSlide()">
+                    <i class="fa-solid fa-arrow-right"></i> <span class="hidden sm:inline">السابق</span>
+                </button>
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="next-btn" onclick="nextSlide()">
+                    <span class="hidden sm:inline">التالي</span> <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
         </div>
 
     </div>
