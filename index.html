@@ -3,1287 +3,686 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محلل ولوحة بيانات نتائج البرنامج التدريبي الاحترافي</title>
-    <!-- Google Fonts: Tajawal & Cairo for premium typography -->
+    <title>لعبة التدريب المستدام: ابنِ أكاديمية المستقبل</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel for JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Google Fonts for Arabic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN for robust rendering -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Lucide Icons for dynamic visual representations -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- SheetJS (xlsx) for processing uploaded files -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- html2canvas for PDF and Image exports -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            slate: '#0f172a',
-                            emerald: '#059669',
-                            indigo: '#4f46e5',
-                            rose: '#e11d48',
-                            amber: '#d97706',
-                            cardBg: '#ffffff',
-                            bg: '#f8fafc'
-                        }
-                    },
-                    borderRadius: {
-                        '3xl': '1.5rem',
-                        '2.5xl': '1.25rem'
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Cairo', 'Tajawal', sans-serif;
-            background-color: #f1f5f9;
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            min-height: 100vh;
         }
-        /* Style adjustments for flawless chart containers */
-        .chart-container {
-            position: relative;
-            margin: auto;
-            width: 100%;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(220, 252, 231, 0.5);
         }
-        /* Custom dynamic transitions for responsive filter updates */
-        .interactive-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
-        .interactive-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        .animate-bounce-slow {
+            animation: bounce-slow 3s infinite ease-in-out;
         }
-        /* Custom slider and UI elements */
-        input[type="range"]::-webkit-slider-thumb {
-            background: #4f46e5;
-            cursor: pointer;
+        @keyframes float-item {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .unlocked-item {
+            animation: float-item 2s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col pb-12">
+<body class="p-2 md:p-6 flex items-center justify-center">
 
-    <!-- Smart UX Navigation & Control Header -->
-    <header class="bg-brand-slate text-white py-5 px-6 sticky top-0 z-30 shadow-md backdrop-blur-md bg-opacity-95">
-        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 text-white p-3 rounded-2xl shadow-lg shadow-indigo-600/30">
-                    <i data-lucide="bar-chart-3" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg md:text-2xl font-black tracking-wide flex items-center gap-2">
-                        <span>محلل الأداء التدريبي الذكي</span>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">إصدار الخبير 2026</span>
-                    </h1>
-                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">لوحة معلومات إحصائية تفاعلية لتحليل الأداء وبناء التقارير التلقائية</p>
-                </div>
-            </div>
-            
-            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-center lg:justify-end">
-                <!-- Drop Excel Area -->
-                <label class="flex items-center gap-2 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 px-4 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all border border-indigo-500/30">
-                    <i data-lucide="upload-cloud" class="w-4.5 h-4.5"></i>
-                    <span>رفع ملف "تقييم متدربين برنامج تصميم المحتوى التعليمي الرقمي.xlsx"</span>
-                    <input type="file" id="excelFile" accept=".xlsx, .xls" class="hidden" onchange="handleFile(event)">
-                </label>
+    <div id="root" class="w-full max-w-4xl"></div>
 
-                <!-- Export as Image -->
-                <button onclick="exportDashboard()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all">
-                    <i data-lucide="file-image" class="w-4.5 h-4.5"></i>
-                    <span>تصدير اللوحة كـ PNG</span>
-                </button>
-            </div>
-        </div>
-    </header>
+    <script type="text/babel">
+        // Web Audio Synth for game sounds
+        const playSound = (type) => {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
 
-    <!-- Main Interactive Dashboard Container -->
-    <main class="max-w-7xl mx-auto px-4 md:px-6 mt-6 w-full flex-grow">
-        
-        <!-- Smart Interactive Filters Segment -->
-        <section class="bg-white border border-slate-200/80 rounded-3xl p-5 mb-6 shadow-sm">
-            <div class="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
-                <i data-lucide="sliders-horizontal" class="w-5 h-5 text-indigo-600"></i>
-                <h2 class="font-bold text-slate-800 text-sm md:text-base">تصفية البيانات الفورية والتحليل المتجاوب</h2>
-                <span class="text-xs text-slate-400 mr-auto">حدد معايير البحث لتحديث اللوحة تلقائيًا</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Gender Filter -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-2">تصفية حسب الجنس</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="applyGenderFilter('all')" id="gender-all" class="filter-btn-gender bg-indigo-600 text-white border border-indigo-600 py-2 px-3 rounded-xl text-xs font-bold transition-all">الكل</button>
-                        <button onclick="applyGenderFilter('ذكر')" id="gender-male" class="filter-btn-gender bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 py-2 px-3 rounded-xl text-xs font-bold transition-all">ذكور</button>
-                        <button onclick="applyGenderFilter('أنثى')" id="gender-female" class="filter-btn-gender bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 py-2 px-3 rounded-xl text-xs font-bold transition-all">إناث</button>
-                    </div>
-                </div>
-
-                <!-- Age Category Filter -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-2">فئة عمر المتدربين</label>
-                    <select id="age-filter-select" onchange="applyAgeFilter(this.value)" class="w-full bg-slate-50 text-slate-700 border border-slate-200 rounded-xl py-2 px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="all">كافة الأعمار</option>
-                        <option value="under25">أقل من 25 سنة</option>
-                        <option value="25to35">بين 25 و 35 سنة</option>
-                        <option value="over35">أكبر من 35 سنة</option>
-                    </select>
-                </div>
-
-                <!-- Search / Specialties Filter -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-2">تصفية حسب التخصص</label>
-                    <select id="specialty-filter-select" onchange="applySpecialtyFilter(this.value)" class="w-full bg-slate-50 text-slate-700 border border-slate-200 rounded-xl py-2 px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="all">كافة التخصصات والمجالات</option>
-                        <!-- Options generated dynamically -->
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <!-- CORE CAPTURE AREA (The Dashboard canvas block) -->
-        <div id="dashboard-capture-root" class="space-y-6">
-
-            <!-- KPI Summary Scorecard Row -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                <!-- KPI Card 1: Trainees Volume -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-2.5xl shadow-sm interactive-card flex items-center gap-4">
-                    <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-2xl">
-                        <i data-lucide="users-2" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 font-bold block">إجمالي المتدربين المشمولين</span>
-                        <div class="flex items-baseline gap-1 mt-1">
-                            <span id="kpi-total-trainees" class="text-2xl md:text-3.5xl font-black text-slate-900">45</span>
-                            <span class="text-xs text-slate-500 font-bold">متدرب/ة</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPI Card 2: Weighted Final Score -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-2.5xl shadow-sm interactive-card flex items-center gap-4">
-                    <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-2xl">
-                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 font-bold block">متوسط الدرجة النهائية</span>
-                        <div class="flex items-baseline gap-1 mt-1">
-                            <span id="kpi-avg-score" class="text-2xl md:text-3.5xl font-black text-emerald-600">85.4%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPI Card 3: Success & Excellence Ratio -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-2.5xl shadow-sm interactive-card flex items-center gap-4">
-                    <div class="bg-amber-50 text-amber-600 p-3.5 rounded-2xl">
-                        <i data-lucide="award" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 font-bold block">معدل التميز الأكاديمي</span>
-                        <div class="flex items-baseline gap-1 mt-1">
-                            <span id="kpi-success-ratio" class="text-2xl md:text-3.5xl font-black text-slate-900">80%</span>
-                            <span class="text-[10px] text-slate-400 font-semibold">(امتياز وجيد جداً)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPI Card 4: Age Index -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-2.5xl shadow-sm interactive-card flex items-center gap-4">
-                    <div class="bg-rose-50 text-rose-600 p-3.5 rounded-2xl">
-                        <i data-lucide="hourglass" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 font-bold block">متوسط عمر المتدربين</span>
-                        <div class="flex items-baseline gap-1 mt-1">
-                            <span id="kpi-avg-age" class="text-2xl md:text-3.5xl font-black text-slate-900">28.5</span>
-                            <span class="text-xs text-slate-500 font-bold">سنة</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Visual Charts - Row 1: Donut & Radar Chart -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Donut Chart: Levels and Gender representation -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm lg:col-span-5 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                            <h3 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
-                                <i data-lucide="donut" class="w-5 h-5 text-indigo-600"></i>
-                                <span>توزيع مستويات أداء المتدربين</span>
-                            </h3>
-                            <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-md font-black">مؤشر الفئات</span>
-                        </div>
-                        <div class="chart-container h-64 flex items-center justify-center">
-                            <canvas id="levelsDonutChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-slate-50 text-[11px]">
-                        <div class="flex items-center gap-1.5 justify-center bg-slate-50 py-1.5 rounded-lg">
-                            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
-                            <span class="text-slate-500">ممتاز (90+):</span>
-                            <span id="level-stat-exc" class="font-bold text-slate-800">0</span>
-                        </div>
-                        <div class="flex items-center gap-1.5 justify-center bg-slate-50 py-1.5 rounded-lg">
-                            <span class="w-2.5 h-2.5 bg-blue-500 rounded-full"></span>
-                            <span class="text-slate-500">جيد جداً (80-89):</span>
-                            <span id="level-stat-vg" class="font-bold text-slate-800">0</span>
-                        </div>
-                        <div class="flex items-center gap-1.5 justify-center bg-slate-50 py-1.5 rounded-lg">
-                            <span class="w-2.5 h-2.5 bg-amber-500 rounded-full"></span>
-                            <span class="text-slate-500">جيد (70-79):</span>
-                            <span id="level-stat-g" class="font-bold text-slate-800">0</span>
-                        </div>
-                        <div class="flex items-center gap-1.5 justify-center bg-slate-50 py-1.5 rounded-lg">
-                            <span class="w-2.5 h-2.5 bg-rose-500 rounded-full"></span>
-                            <span class="text-slate-500">مقبول/متعثر:</span>
-                            <span id="level-stat-f" class="font-bold text-slate-800">0</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Radar Chart: Interactive Multi-Axis Performance -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm lg:col-span-7 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                            <h3 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
-                                <i data-lucide="shield-alert" class="w-5 h-5 text-indigo-600"></i>
-                                <span>مخطط راداري لمقارنة محاور الأداء التعليمي</span>
-                            </h3>
-                            <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-md font-black">المهارات الكبرى</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mb-2">رصد متوسط استجابة ومعدلات إنجاز المتدربين عبر الأبعاد التعليمية الأربعة للبرنامج</p>
-                        <div class="chart-container h-72 flex items-center justify-center">
-                            <canvas id="performanceRadarChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Visual Charts - Row 2: Scatter Plot & Advanced Custom Box Plot -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- Scatter Plot: Analyzing correlation of Age vs. Performance -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm lg:col-span-7 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                            <h3 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
-                                <i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-600"></i>
-                                <span>مخطط الانتشار: أثر الفئة العمرية على الدرجة النهائية</span>
-                            </h3>
-                            <span class="text-[10px] bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded-md font-black">دراسة الارتباط</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mb-2">يُمثل كل نقطة متدرباً، تُظهر المحاور تقاطع العمر الفعلي بالدرجة الإجمالية المحققة</p>
-                        <div class="chart-container h-64">
-                            <canvas id="ageScoreScatterChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Custom Box Plot & Dispersal representation -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm lg:col-span-5 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                            <h3 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
-                                <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i>
-                                <span>مخطط الصندوق والشاربين (توزيع وتشتت الدرجات)</span>
-                            </h3>
-                            <span class="text-[10px] bg-amber-50 text-amber-700 px-2.5 py-0.5 rounded-md font-black">أدوات الإحصاء المتقدمة</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mb-6">يُوضح الحدود الإحصائية لانتشار وتوزيع الدرجات بين كافة أفراد المجموعة</p>
-                        
-                        <!-- Premium Interactive Box Plot visual widget -->
-                        <div class="space-y-6 py-4">
-                            <div class="relative pt-6">
-                                <!-- Horizontal Scale representing 0 to 100 -->
-                                <div class="w-full bg-slate-100 h-1.5 rounded-full relative">
-                                    <!-- Whisker line (Min to Max) -->
-                                    <div id="boxplot-whisker" class="absolute bg-slate-400 h-0.5 top-1/2 -translate-y-1/2" style="left: 60%; right: 5%;"></div>
-                                    <!-- Box (Q1 to Q3) -->
-                                    <div id="boxplot-box" class="absolute bg-indigo-500/30 border border-indigo-600 h-6 top-1/2 -translate-y-1/2 rounded-md shadow-inner" style="left: 70%; right: 10%;">
-                                        <!-- Median Marker inside the box -->
-                                        <div id="boxplot-median" class="absolute w-1 bg-indigo-800 h-full left-1/2 -translate-x-1/2 shadow-md"></div>
-                                    </div>
-                                    <!-- Dot indicators for extreme points -->
-                                    <div id="boxplot-dot-min" class="absolute w-3.5 h-3.5 bg-rose-500 rounded-full top-1/2 -translate-y-1/2 -translate-x-1/2 border-2 border-white shadow shadow-rose-500/50" style="left: 60%;"></div>
-                                    <div id="boxplot-dot-max" class="absolute w-3.5 h-3.5 bg-emerald-500 rounded-full top-1/2 -translate-y-1/2 -translate-x-1/2 border-2 border-white shadow shadow-emerald-500/50" style="left: 95%;"></div>
-                                </div>
-                                
-                                <div class="flex justify-between text-[10px] text-slate-400 mt-6 font-bold">
-                                    <span>درجة الصفر</span>
-                                    <span>25</span>
-                                    <span>50</span>
-                                    <span>75</span>
-                                    <span>الدرجة الكاملة 100</span>
-                                </div>
-                            </div>
-
-                            <!-- Numerical representation for complete context -->
-                            <div class="grid grid-cols-5 gap-1.5 text-center pt-2">
-                                <div class="bg-rose-50/50 border border-rose-100 p-2 rounded-xl">
-                                    <span class="block text-[8px] text-slate-400 font-bold">الحد الأدنى</span>
-                                    <span id="bp-val-min" class="text-xs font-black text-rose-700">60%</span>
-                                </div>
-                                <div class="bg-indigo-50/30 border border-indigo-100 p-2 rounded-xl">
-                                    <span class="block text-[8px] text-slate-400 font-bold">الربيع الأول Q1</span>
-                                    <span id="bp-val-q1" class="text-xs font-black text-indigo-700">78%</span>
-                                </div>
-                                <div class="bg-indigo-50 border border-indigo-200 p-2 rounded-xl">
-                                    <span class="block text-[8px] text-slate-400 font-bold">الوسيط Med</span>
-                                    <span id="bp-val-median" class="text-xs font-black text-indigo-900">86%</span>
-                                </div>
-                                <div class="bg-indigo-50/30 border border-indigo-100 p-2 rounded-xl">
-                                    <span class="block text-[8px] text-slate-400 font-bold">الربيع الثالث Q3</span>
-                                    <span id="bp-val-q3" class="text-xs font-black text-indigo-700">92%</span>
-                                </div>
-                                <div class="bg-emerald-50/50 border border-emerald-100 p-2 rounded-xl">
-                                    <span class="block text-[8px] text-slate-400 font-bold">الحد الأقصى</span>
-                                    <span id="bp-val-max" class="text-xs font-black text-emerald-700">99%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Visual Charts - Row 3: Treemap of Categories & Interactive Heat Map -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- Treemap for Frequencies of Categories/Strengths -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm lg:col-span-5 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                            <h3 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
-                                <i data-lucide="layout-grid" class="w-5 h-5 text-indigo-600"></i>
-                                <span>المخطط الشجري للفئات الأكثر تكراراً</span>
-                            </h3>
-                            <span class="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md font-black">تحليل المصطلحات</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mb-4">يعرض التخصصات الأكاديمية ونقاط القوة والضعف الأكثر حضوراً وتكراراً لدى المتدربين</p>
-                        
-                        <!-- CSS Grid-based fully responsive Treemap -->
-                        <div class="h-64 flex flex-col gap-2" id="treemap-container">
-                            <!-- Items populated dynamically -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Heat Map: Performance heatmap of individual participants versus major axes -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm lg:col-span-7 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                            <h3 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
-                                <i data-lucide="grid" class="w-5 h-5 text-indigo-600"></i>
-                                <span>خريطة الأداء الحرارية الفردية (مصفوفة الكفاءة)</span>
-                            </h3>
-                            <span class="text-[10px] bg-purple-50 text-purple-700 px-2.5 py-0.5 rounded-md font-black">تحليل الفروق</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mb-4">ترصد أداء المتدربين الأوائل أو عينات عشوائية عبر الأبعاد المختلفة (الألوان الغامقة تعكس أداءاً فائقاً)</p>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-right border-collapse text-[11px]">
-                                <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-black">
-                                        <th class="p-2.5 rounded-r-xl">اسم المتدرب/ة</th>
-                                        <th class="p-2.5 text-center">سيناريو المحتوى</th>
-                                        <th class="p-2.5 text-center">التصميم البصري</th>
-                                        <th class="p-2.5 text-center">إنتاج الوسائط</th>
-                                        <th class="p-2.5 text-center">الأنشطة والتقييم</th>
-                                        <th class="p-2.5 text-center rounded-l-xl">الدرجة النهائية</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="heatmap-body">
-                                    <!-- Dynamic Heatmap Rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- AI Analytics & Expert Advisory Report Section -->
-            <section class="bg-slate-900 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-                <!-- Background abstract design -->
-                <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:30px_30px]"></div>
-                
-                <div class="relative z-10 space-y-6">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-emerald-500 text-slate-950 p-2.5 rounded-2xl shadow-lg shadow-emerald-500/20">
-                                <i data-lucide="cpu" class="w-6 h-6"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-black text-lg md:text-xl text-emerald-400">التقرير الاستراتيجي ومحرك التحليل التلقائي الذكي</h3>
-                                <p class="text-xs text-slate-400">يقوم المحرك تلقائياً برصد وتلخيص الأنماط وحساب العلاقات الرياضية بناءً على خيارات التصفية النشطة</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700/50 self-start md:self-auto">
-                            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                            <span class="text-[10px] text-slate-300 font-bold">تحليل حي ومباشر</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 text-sm leading-relaxed text-slate-300">
-                        <!-- Analytical Findings Block -->
-                        <div class="bg-slate-800/45 p-5 rounded-2.5xl border border-slate-800">
-                            <h4 class="text-emerald-400 font-black mb-3 flex items-center gap-2 text-xs md:text-sm">
-                                <i data-lucide="compass" class="w-4.5 h-4.5"></i>
-                                <span>١. الأنماط الإحصائية المكتشفة</span>
-                            </h4>
-                            <p class="text-xs mb-3 text-slate-200">بناءً على الشريحة النشطة، كشف الفحص الدقيق والتحليلي للبيانات عما يلي:</p>
-                            <ul class="space-y-3.5 text-xs text-slate-300" id="ai-patterns-list">
-                                <!-- Dynamic List -->
-                            </ul>
-                        </div>
-
-                        <!-- Correlation and Variances Block -->
-                        <div class="bg-slate-800/45 p-5 rounded-2.5xl border border-slate-800">
-                            <h4 class="text-indigo-400 font-black mb-3 flex items-center gap-2 text-xs md:text-sm">
-                                <i data-lucide="merge" class="w-4.5 h-4.5"></i>
-                                <span>٢. علاقات المتغيرات والارتباطات</span>
-                            </h4>
-                            <p class="text-xs mb-3 text-slate-200">تحليل الاتجاه والارتباط بين متغيرات الفئات العمرية ومستوى الأداء التراكمي:</p>
-                            <div class="bg-slate-900/65 border border-slate-700/50 p-4 rounded-xl mb-3 text-center">
-                                <span class="block text-[9px] text-slate-400 uppercase font-black tracking-wide">اتجاه معامل الارتباط الإحصائي</span>
-                                <span id="ai-correlation-label" class="text-base font-black text-slate-100 block mt-1">ارتباط إيجابي طفيف</span>
-                                <span id="ai-correlation-desc" class="text-[10px] text-slate-400 mt-1 block"></span>
-                            </div>
-                            <ul class="space-y-3 text-xs" id="ai-relations-list">
-                                <!-- Dynamic List -->
-                            </ul>
-                        </div>
-
-                        <!-- Strategic Recommendations Block -->
-                        <div class="bg-slate-800/45 p-5 rounded-2.5xl border border-slate-800">
-                            <h4 class="text-amber-400 font-black mb-3 flex items-center gap-2 text-xs md:text-sm">
-                                <i data-lucide="lightbulb" class="w-4.5 h-4.5"></i>
-                                <span>٣. أهم التوصيات لتطوير البرنامج</span>
-                            </h4>
-                            <p class="text-xs mb-3 text-slate-200">بناءً على الفجوات الإحصائية المرصودة، يُنصح صناع القرار بتطبيق التدابير التالية:</p>
-                            <ul class="space-y-3.5 text-xs text-slate-300" id="ai-recommendations-list">
-                                <!-- Dynamic List -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-        </div>
-
-    </main>
-
-    <!-- Footer of Page -->
-    <footer class="mt-12 text-center text-[11px] text-slate-400 border-t border-slate-200/60 pt-6">
-        <p class="font-bold">منظومة الإنفوجرافيك والتحليل المتكاملة لملف: "تقييم متدربين برنامج تصميم المحتوى التعليمي الرقمي.xlsx"</p>
-        <p class="mt-1 font-medium">تم التطوير البرمجي والإحصائي للوحة الأداء بواسطة الخبير لعام 2026. كافة الحقوق محفوظة.</p>
-    </footer>
-
-    <!-- Script Engine for Loading, Filtering, Rendering, and Analyzing Excel Data -->
-    <script>
-        // Global Datasets representation
-        let originalDataset = [];
-        let activeDataset = [];
-        let activeFilters = {
-            gender: 'all',
-            ageGroup: 'all',
-            specialty: 'all'
+                if (type === 'success') {
+                    // Two-tone happy sound
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.start();
+                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1); // A5
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime + 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'error') {
+                    // Buzz sound
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(120, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'complete') {
+                    // Ascending fanfare
+                    const notes = [261.63, 329.63, 392.00, 523.25]; // C major chord
+                    notes.forEach((freq, i) => {
+                        const noteOsc = ctx.createOscillator();
+                        const noteGain = ctx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(ctx.destination);
+                        noteOsc.frequency.setValueAtTime(freq, ctx.currentTime + (i * 0.1));
+                        noteGain.gain.setValueAtTime(0.1, ctx.currentTime + (i * 0.1));
+                        noteGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (i * 0.1) + 0.3);
+                        noteOsc.start(ctx.currentTime + (i * 0.1));
+                        noteOsc.stop(ctx.currentTime + (i * 0.1) + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio not supported yet.");
+            }
         };
 
-        // ChartJS Global Reference Handles
-        let levelsDonutInstance = null;
-        let performanceRadarInstance = null;
-        let ageScoreScatterInstance = null;
+        function App() {
+            // Screen state: 'intro' | 'play' | 'outro'
+            const [screen, setScreen] = React.useState('intro');
+            const [currentStage, setCurrentStage] = React.useState(1); // 1, 2, 3
+            const [score, setScore] = React.useState(0);
+            const [wrongAnswers, setWrongAnswers] = React.useState(0);
+            const [unlockedItems, setUnlockedItems] = React.useState([]); // items unlocked in the academy
+            const [feedback, setFeedback] = React.useState(null); // { isCorrect: bool, text: string }
+            const [stage1Index, setStage1Index] = React.useState(0);
+            const [stage2Sorted, setStage2Sorted] = React.useState([]); // array of sorted items
+            const [stage3Index, setStage3Index] = React.useState(0);
 
-        // Realistic Mock Data matching "تقييم متدربين برنامج تصميم المحتوى التعليمي الرقمي.xlsx"
-        const defaultMockData = [
-            { "الاسم": "أحمد عبدالله الحربي", "الجنس": "ذكر", "العمر": 24, "سيناريو المحتوى": 92, "التصميم البصري": 88, "إنتاج الوسائط": 75, "الأنشطة والتقييم": 90, "الدرجة النهائية": 86.3, "نقاط القوة": "صياغة الأهداف", "نقاط الضعف": "إدارة الوقت", "التخصص": "تكنولوجيا التعليم" },
-            { "الاسم": "فاطمة محمد العتيبي", "الجنس": "أنثى", "العمر": 28, "سيناريو المحتوى": 96, "التصميم البصري": 94, "إنتاج الوسائط": 82, "الأنشطة والتقييم": 95, "الدرجة النهائية": 91.8, "نقاط القوة": "التصميم البصري", "نقاط الضعف": "مؤثرات الصوت", "التخصص": "تصميم الجرافيك" },
-            { "الاسم": "سارة عبدالرحمن الشهري", "الجنس": "أنثى", "العمر": 31, "سيناريو المحتوى": 88, "التصميم البصري": 92, "إنتاج الوسائط": 80, "الأنشطة والتقييم": 87, "الدرجة النهائية": 86.8, "نقاط القوة": "تسلسل المحتوى", "نقاط الضعف": "تصميم الفيديو", "التخصص": "علوم الحاسب" },
-            { "الاسم": "خالد وليد الدوسري", "الجنس": "ذكر", "العمر": 22, "سيناريو المحتوى": 80, "التصميم البصري": 85, "إنتاج الوسائط": 70, "الأنشطة والتقييم": 82, "الدرجة النهائية": 79.3, "نقاط القوة": "صياغة الأهداف", "نقاط الضعف": "برمجيات التأليف", "التخصص": "تكنولوجيا التعليم" },
-            { "الاسم": "مها سليمان المطيري", "الجنس": "أنثى", "العمر": 36, "سيناريو المحتوى": 90, "التصميم البصري": 88, "إنتاج الوسائط": 85, "الأنشطة والتقييم": 94, "الدرجة النهائية": 89.3, "نقاط القوة": "تصميم الأنشطة", "نقاط الضعف": "إدارة الوقت", "التخصص": "مناهج وطرق تدريس" },
-            { "الاسم": "محمد علي القحطاني", "الجنس": "ذكر", "العمر": 42, "سيناريو المحتوى": 74, "التصميم البصري": 70, "إنتاج الوسائط": 65, "الأنشطة والتقييم": 72, "الدرجة النهائية": 70.3, "نقاط القوة": "تسلسل المحتوى", "نقاط الضعف": "برمجيات التأليف", "التخصص": "علوم اللغة العربية" },
-            { "الاسم": "نورة فهد الشمري", "الجنس": "أنثى", "العمر": 29, "سيناريو المحتوى": 95, "التصميم البصري": 95, "إنتاج الوسائط": 88, "الأنشطة والتقييم": 92, "الدرجة النهائية": 92.5, "نقاط القوة": "التصميم البصري", "نقاط الضعف": "تصميم الفيديو", "التخصص": "تصميم الجرافيك" },
-            { "الاسم": "عبدالرحمن صالح غامدي", "الجنس": "ذكر", "العمر": 33, "سيناريو المحتوى": 85, "التصميم البصري": 80, "إنتاج الوسائط": 78, "الأنشطة والتقييم": 85, "الدرجة النهائية": 82.0, "نقاط القوة": "صياغة الأهداف", "نقاط الضعف": "مؤثرات الصوت", "التخصص": "تكنولوجيا التعليم" },
-            { "الاسم": "منى عبيد السبيعي", "الجنس": "أنثى", "العمر": 27, "سيناريو المحتوى": 91, "التصميم البصري": 89, "إنتاج الوسائط": 79, "الأنشطة والتقييم": 90, "الدرجة النهائية": 87.3, "نقاط القوة": "تسلسل المحتوى", "نقاط الضعف": "إدارة الوقت", "التخصص": "علوم الحاسب" },
-            { "الاسم": "فيصل فهد السديري", "الجنس": "ذكر", "العمر": 35, "سيناريو المحتوى": 84, "التصميم البصري": 86, "إنتاج الوسائط": 74, "الأنشطة والتقييم": 80, "الدرجة النهائية": 81.0, "نقاط القوة": "تصميم الأنشطة", "نقاط الضعف": "برمجيات التأليف", "التخصص": "مناهج وطرق تدريس" },
-            { "الاسم": "أمل حسن المالكي", "الجنس": "أنثى", "العمر": 23, "سيناريو المحتوى": 98, "التصميم البصري": 96, "إنتاج الوسائط": 86, "الأنشطة والتقييم": 96, "الدرجة النهائية": 94.0, "نقاط القوة": "التصميم البصري", "نقاط الضعف": "مؤثرات الصوت", "التخصص": "تصميم الجرافيك" },
-            { "الاسم": "سلطان معجب الدوسري", "الجنس": "ذكر", "العمر": 39, "سيناريو المحتوى": 78, "التصميم البصري": 76, "إنتاج الوسائط": 72, "الأنشطة والتقييم": 78, "الدرجة النهائية": 76.0, "نقاط القوة": "صياغة الأهداف", "نقاط الضعف": "إدارة الوقت", "التخصص": "تكنولوجيا التعليم" },
-            { "الاسم": "ريم عبدالعزيز اليوسف", "الجنس": "أنثى", "العمر": 26, "سيناريو المحتوى": 93, "التصميم البصري": 91, "إنتاج الوسائط": 84, "الأنشطة والتقييم": 92, "الدرجة النهائية": 90.0, "نقاط القوة": "تسلسل المحتوى", "نقاط الضعف": "تصميم الفيديو", "التخصص": "علوم الحاسب" },
-            { "الاسم": "بندر سعود العنزي", "الجنس": "ذكر", "العمر": 30, "سيناريو المحتوى": 86, "التصميم البصري": 82, "إنتاج الوسائط": 75, "الأنشطة والتقييم": 84, "الدرجة النهائية": 81.8, "نقاط القوة": "صياغة الأهداف", "نقاط الضعف": "برمجيات التأليف", "التخصص": "مناهج وطرق تدريس" },
-            { "الاسم": "هند نايف الرشيد", "الجنس": "أنثى", "العمر": 32, "سيناريو المحتوى": 90, "التصميم البصري": 94, "إنتاج الوسائط": 81, "الأنشطة والتقييم": 89, "الدرجة النهائية": 88.5, "نقاط القوة": "التصميم البصري", "نقاط الضعف": "إدارة الوقت", "التخصص": "تصميم الجرافيك" }
-        ];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            originalDataset = JSON.parse(JSON.stringify(defaultMockData));
-            activeDataset = JSON.parse(JSON.stringify(defaultMockData));
-            
-            // Build the filters dynamic selection and trigger interface update
-            populateSpecialties();
-            updateDashboard();
-        });
-
-        // Parse through unique background specialties to construct filtering criteria
-        function populateSpecialties() {
-            const selectEl = document.getElementById('specialty-filter-select');
-            
-            // Re-render select options
-            selectEl.innerHTML = '<option value="all">كافة التخصصات والمجالات</option>';
-            
-            const specialties = [...new Set(originalDataset.map(row => row["التخصص"] || "غير محدد"))];
-            specialties.forEach(spec => {
-                const opt = document.createElement('option');
-                opt.value = spec;
-                opt.innerText = spec;
-                selectEl.appendChild(opt);
-            });
-        }
-
-        // Handle physical file uploads
-        function handleFile(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                try {
-                    const data = evt.target.result;
-                    const workbook = XLSX.read(data, { type: 'binary' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const json = XLSX.utils.sheet_to_json(worksheet);
-                    
-                    if (json && json.length > 0) {
-                        processUploadedExcel(json);
-                    } else {
-                        showNotification('الملف يبدو فارغاً أو بتنسيق غير معتمد.', 'error');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    showNotification('حدث خطأ أثناء معالجة ملف Excel، يرجى التثبت من سلامة الملف والامتداد.', 'error');
-                }
-            };
-            reader.readAsBinaryString(file);
-        }
-
-        // Process imported JSON to match fields
-        function processUploadedExcel(data) {
-            const keys = Object.keys(data[0]);
-            
-            // Map column names dynamically to maintain uniform processing keys
-            const nameKey = keys.find(k => k.includes('اسم') || k.toLowerCase().includes('name'));
-            const genderKey = keys.find(k => k.includes('جنس') || k.toLowerCase().includes('gender') || k.includes('نوع'));
-            const ageKey = keys.find(k => k.includes('عمر') || k.toLowerCase().includes('age') || k.includes('سن'));
-            const specKey = keys.find(k => k.includes('تخصص') || k.toLowerCase().includes('specialty') || k.toLowerCase().includes('major'));
-            const strengthKey = keys.find(k => k.includes('قوة') || k.toLowerCase().includes('strength'));
-            const weaknessKey = keys.find(k => k.includes('ضعف') || k.includes('تحسين') || k.toLowerCase().includes('weakness'));
-
-            // Core Training Axis Scores
-            const ax1Key = keys.find(k => k.includes('سيناريو') || k.includes('الأهداف') || k.includes('المحور الأول'));
-            const ax2Key = keys.find(k => k.includes('تصميم') || k.includes('بصري') || k.includes('المحور الثاني'));
-            const ax3Key = keys.find(k => k.includes('وسائط') || k.includes('إنتاج') || k.includes('المحور الثالث'));
-            const ax4Key = keys.find(k => k.includes('أنشطة') || k.includes('تقييم') || k.includes('المحور الرابع'));
-            const finalScoreKey = keys.find(k => k.includes('نهائي') || k.includes('مجموع') || k.toLowerCase().includes('score') || k.toLowerCase().includes('total'));
-
-            const formatted = data.map((row, idx) => {
-                const name = row[nameKey] || `متدرب مجهول ${idx + 1}`;
-                
-                // Normalizing gender strings
-                let gender = 'أنثى';
-                const gVal = String(row[genderKey] || '').trim();
-                if (gVal.includes('ذكر') || gVal.toLowerCase() === 'male' || gVal.toLowerCase() === 'm') {
-                    gender = 'ذكر';
-                }
-
-                const age = parseInt(row[ageKey]) || (24 + (idx % 15));
-                const spec = row[specKey] || "تكنولوجيا التعليم";
-                const strength = row[strengthKey] || (idx % 2 === 0 ? "التصميم البصري" : "صياغة الأهداف");
-                const weakness = row[weaknessKey] || (idx % 2 === 0 ? "إدارة الوقت" : "برمجيات التأليف");
-
-                // Parse Axis scores or generate deterministic defaults
-                const ax1 = parseFloat(row[ax1Key]) || (70 + (idx % 30));
-                const ax2 = parseFloat(row[ax2Key]) || (72 + (idx % 28));
-                const ax3 = parseFloat(row[ax3Key]) || (65 + (idx % 35));
-                const ax4 = parseFloat(row[ax4Key]) || (75 + (idx % 25));
-                
-                let finalScore = parseFloat(row[finalScoreKey]);
-                if (isNaN(finalScore)) {
-                    finalScore = parseFloat(((ax1 + ax2 + ax3 + ax4) / 4).toFixed(1));
-                }
-
-                return {
-                    "الاسم": name,
-                    "الجنس": gender,
-                    "العمر": age,
-                    "سيناريو المحتوى": ax1,
-                    "التصميم البصري": ax2,
-                    "إنتاج الوسائط": ax3,
-                    "الأنشطة والتقييم": ax4,
-                    "الالدرجة النهائية": finalScore, // Normalize final score access
-                    "الدرجة النهائية": finalScore,
-                    "نقاط القوة": strength,
-                    "نقاط الضعف": weakness,
-                    "التخصص": spec
-                };
-            });
-
-            originalDataset = formatted;
-            populateSpecialties();
-            
-            // Reset active filters
-            activeFilters = { gender: 'all', ageGroup: 'all', specialty: 'all' };
-            resetFilterUI();
-            
-            updateDashboard();
-            showNotification('تم استيراد وتحليل بيانات ملف Excel بنجاح وتحديث اللوحة بالكامل.', 'success');
-        }
-
-        // Reset Filter UI styles to 'All'
-        function resetFilterUI() {
-            document.querySelectorAll('.filter-btn-gender').forEach(btn => {
-                btn.className = "filter-btn-gender bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 py-2 px-3 rounded-xl text-xs font-bold transition-all";
-            });
-            document.getElementById('gender-all').className = "filter-btn-gender bg-indigo-600 text-white border border-indigo-600 py-2 px-3 rounded-xl text-xs font-bold transition-all";
-            document.getElementById('age-filter-select').value = "all";
-            document.getElementById('specialty-filter-select').value = "all";
-        }
-
-        // Toast notifications logic
-        function showNotification(msg, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-5 left-5 z-50 p-4 rounded-2xl text-xs font-bold shadow-xl transition-all border transform translate-y-10 opacity-0 ${
-                type === 'success' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'
-            }`;
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.remove('translate-y-10', 'opacity-0');
-            }, 100);
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-10', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        // Applying Gender Filter
-        function applyGenderFilter(gender) {
-            activeFilters.gender = gender;
-            document.querySelectorAll('.filter-btn-gender').forEach(btn => {
-                btn.className = "filter-btn-gender bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 py-2 px-3 rounded-xl text-xs font-bold transition-all";
-            });
-            
-            const activeId = gender === 'all' ? 'gender-all' : (gender === 'ذكر' ? 'gender-male' : 'gender-female');
-            document.getElementById(activeId).className = "filter-btn-gender bg-indigo-600 text-white border border-indigo-600 py-2 px-3 rounded-xl text-xs font-bold transition-all";
-            
-            updateDashboard();
-        }
-
-        // Applying Age Group Filter
-        function applyAgeFilter(group) {
-            activeFilters.ageGroup = group;
-            updateDashboard();
-        }
-
-        // Applying Specialty Filter
-        function applySpecialtyFilter(spec) {
-            activeFilters.specialty = spec;
-            updateDashboard();
-        }
-
-        // Filtering engine based on combined rules
-        function filterData() {
-            activeDataset = originalDataset.filter(row => {
-                // Gender match
-                const genderMatch = (activeFilters.gender === 'all' || row["الجنس"] === activeFilters.gender);
-                
-                // Age group match
-                let ageMatch = true;
-                const age = row["العمر"];
-                if (activeFilters.ageGroup === 'under25') {
-                    ageMatch = age < 25;
-                } else if (activeFilters.ageGroup === '25to35') {
-                    ageMatch = age >= 25 && age <= 35;
-                } else if (activeFilters.ageGroup === 'over35') {
-                    ageMatch = age > 35;
-                }
-
-                // Specialty match
-                const specMatch = (activeFilters.specialty === 'all' || row["التخصص"] === activeFilters.specialty);
-
-                return genderMatch && ageMatch && specMatch;
-            });
-        }
-
-        // Main Update Loop for Dashboard metrics and visuals
-        function updateDashboard() {
-            // Apply filtering logic
-            filterData();
-
-            // 1. Recalculate and update core KPIs
-            calculateKPIs();
-
-            // 2. Render levels Donut Chart
-            renderLevelsDonut();
-
-            // 3. Render axes Radar Chart
-            renderPerformanceRadar();
-
-            // 4. Render Age-Score Scatter Chart
-            renderAgeScoreScatter();
-
-            // 5. Build five-number summary and update Box Plot
-            updateBoxPlot();
-
-            // 6. Build Treemap Categories list
-            renderTreemap();
-
-            // 7. Render dynamic Heat Map
-            renderHeatMap();
-
-            // 8. Generate dynamic AI-powered smart analytical report
-            updateAIReport();
-        }
-
-        // Helper calculations for KPIs
-        function calculateKPIs() {
-            const total = activeDataset.length;
-            document.getElementById('kpi-total-trainees').innerText = total;
-
-            if (total === 0) {
-                document.getElementById('kpi-avg-score').innerText = '0%';
-                document.getElementById('kpi-success-ratio').innerText = '0%';
-                document.getElementById('kpi-avg-age').innerText = '0';
-                return;
-            }
-
-            // Averages
-            const totalScore = activeDataset.reduce((sum, r) => sum + (r["الدرجة النهائية"] || 0), 0);
-            const avgScore = (totalScore / total).toFixed(1);
-            document.getElementById('kpi-avg-score').innerText = `${avgScore}%`;
-
-            const totalAge = activeDataset.reduce((sum, r) => sum + (r["العمر"] || 0), 0);
-            const avgAge = (totalAge / total).toFixed(1);
-            document.getElementById('kpi-avg-age').innerText = avgAge;
-
-            // Excellence and Success (Excellent >= 90 & Very Good >= 80)
-            const excellentAndVeryGood = activeDataset.filter(r => r["الدرجة النهائية"] >= 80).length;
-            const excellenceRatio = Math.round((excellentAndVeryGood / total) * 100);
-            document.getElementById('kpi-success-ratio').innerText = `${excellenceRatio}%`;
-        }
-
-        // Render Levels Donut Chart
-        function renderLevelsDonut() {
-            const ctx = document.getElementById('levelsDonutChart').getContext('2d');
-            
-            // Calculate levels count
-            let exc = 0, vg = 0, g = 0, f = 0;
-            activeDataset.forEach(r => {
-                const s = r["الدرجة النهائية"];
-                if (s >= 90) exc++;
-                else if (s >= 80) vg++;
-                else if (s >= 70) g++;
-                else f++;
-            });
-
-            // Update simple indicators in UI
-            document.getElementById('level-stat-exc').innerText = exc;
-            document.getElementById('level-stat-vg').innerText = vg;
-            document.getElementById('level-stat-g').innerText = g;
-            document.getElementById('level-stat-f').innerText = f;
-
-            if (levelsDonutInstance) {
-                levelsDonutInstance.destroy();
-            }
-
-            levelsDonutInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['ممتاز (90+)', 'جيد جداً (80-89)', 'جيد (70-79)', 'مقبول/متعثر (أقل من 70)'],
-                    datasets: [{
-                        data: [exc, vg, g, f],
-                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
-                        borderWidth: 3,
-                        borderColor: '#ffffff',
-                        hoverOffset: 8
-                    }]
-                },
-                options: {
-                    cutout: '65%',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            rtl: true,
-                            labels: {
-                                font: { family: 'Cairo', size: 10 },
-                                padding: 15
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const val = context.raw;
-                                    const total = exc + vg + g + f;
-                                    const pct = total > 0 ? Math.round((val / total) * 100) : 0;
-                                    return ` ${context.label}: ${val} (${pct}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Render Radar Chart for axes
-        function renderPerformanceRadar() {
-            const ctx = document.getElementById('performanceRadarChart').getContext('2d');
-            
-            const count = activeDataset.length;
-            let sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
-
-            if (count > 0) {
-                activeDataset.forEach(r => {
-                    sum1 += r["سيناريو المحتوى"] || 0;
-                    sum2 += r["التصميم البصري"] || 0;
-                    sum3 += r["إنتاج الوسائط"] || 0;
-                    sum4 += r["الأنشطة والتقييم"] || 0;
-                });
-                sum1 = Math.round(sum1 / count);
-                sum2 = Math.round(sum2 / count);
-                sum3 = Math.round(sum3 / count);
-                sum4 = Math.round(sum4 / count);
-            }
-
-            if (performanceRadarInstance) {
-                performanceRadarInstance.destroy();
-            }
-
-            performanceRadarInstance = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: [
-                        'سيناريو المحتوى التعليمي',
-                        'التصميم البصري والتفاعلية',
-                        'إنتاج ونشر الوسائط المتعددة',
-                        'تصميم الأنشطة والتقييم'
-                    ],
-                    datasets: [{
-                        label: 'متوسط الأداء المئوي',
-                        data: [sum1, sum2, sum3, sum4],
-                        backgroundColor: 'rgba(79, 70, 229, 0.15)',
-                        borderColor: '#4f46e5',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#4f46e5',
-                        pointBorderColor: '#ffffff',
-                        pointHoverBackgroundColor: '#ffffff',
-                        pointHoverBorderColor: '#4f46e5',
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: '#e2e8f0' },
-                            grid: { color: '#e2e8f0' },
-                            suggestedMin: 50,
-                            suggestedMax: 100,
-                            ticks: {
-                                backdropColor: 'transparent',
-                                font: { family: 'Cairo', size: 9 },
-                                color: '#64748b'
-                            },
-                            pointLabels: {
-                                font: { family: 'Cairo', size: 10, weight: 'bold' },
-                                color: '#334155'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        // Render Scatter Plot (Age vs. Score)
-        function renderAgeScoreScatter() {
-            const ctx = document.getElementById('ageScoreScatterChart').getContext('2d');
-            
-            const scatterPoints = activeDataset.map(r => ({
-                x: r["العمر"],
-                y: r["الدرجة النهائية"]
-            }));
-
-            if (ageScoreScatterInstance) {
-                ageScoreScatterInstance.destroy();
-            }
-
-            ageScoreScatterInstance = new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: 'المتدربون المفلترون',
-                        data: scatterPoints,
-                        backgroundColor: '#ef4444',
-                        borderColor: 'rgba(239, 68, 68, 0.2)',
-                        borderWidth: 6,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'العمر الفعلي (سنة)',
-                                font: { family: 'Cairo', size: 11, weight: 'bold' },
-                                color: '#475569'
-                            },
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { family: 'Cairo' } }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'الدرجة النهائية (%)',
-                                font: { family: 'Cairo', size: 11, weight: 'bold' },
-                                color: '#475569'
-                            },
-                            suggestedMin: 50,
-                            suggestedMax: 100,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { family: 'Cairo' } }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` العمر: ${context.parsed.x} سنة | الدرجة: ${context.parsed.y}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Update Box Plot data representation based on current filter active dataset
-        function updateBoxPlot() {
-            if (activeDataset.length === 0) {
-                return;
-            }
-
-            const scores = activeDataset.map(r => r["الدرجة النهائية"]).sort((a, b) => a - b);
-            
-            const min = scores[0];
-            const max = scores[scores.length - 1];
-            
-            const getPercentile = (arr, percentile) => {
-                const index = (percentile / 100) * (arr.length - 1);
-                const lower = Math.floor(index);
-                const upper = Math.ceil(index);
-                const weight = index - lower;
-                return arr[lower] * (1 - weight) + arr[upper] * weight;
-            };
-
-            const q1 = parseFloat(getPercentile(scores, 25).toFixed(1));
-            const median = parseFloat(getPercentile(scores, 50).toFixed(1));
-            const q3 = parseFloat(getPercentile(scores, 75).toFixed(1));
-
-            // Numerical display
-            document.getElementById('bp-val-min').innerText = `${min}%`;
-            document.getElementById('bp-val-q1').innerText = `${q1}%`;
-            document.getElementById('bp-val-median').innerText = `${median}%`;
-            document.getElementById('bp-val-q3').innerText = `${q3}%`;
-            document.getElementById('bp-val-max').innerText = `${max}%`;
-
-            // Adjust Box-Whisker absolute positioning (percentages of the wrapper width)
-            // Scale is relative to 0 - 100 on the layout scale
-            const whiskerLeft = min;
-            const whiskerWidth = max - min;
-            
-            const boxLeft = q1;
-            const boxWidth = q3 - q1;
-            
-            // Relative position of median inside the Box
-            const medianRelative = boxWidth > 0 ? ((median - q1) / boxWidth) * 100 : 50;
-
-            document.getElementById('boxplot-whisker').style.left = `${whiskerLeft}%`;
-            document.getElementById('boxplot-whisker').style.width = `${whiskerWidth}%`;
-
-            document.getElementById('boxplot-box').style.left = `${boxLeft}%`;
-            document.getElementById('boxplot-box').style.width = `${boxWidth}%`;
-            document.getElementById('boxplot-median').style.left = `${medianRelative}%`;
-
-            document.getElementById('boxplot-dot-min').style.left = `${min}%`;
-            document.getElementById('boxplot-dot-max').style.left = `${max}%`;
-        }
-
-        // Render Treemap structure dynamically using beautiful nested blocks
-        function renderTreemap() {
-            const container = document.getElementById('treemap-container');
-            container.innerHTML = '';
-
-            if (activeDataset.length === 0) {
-                container.innerHTML = '<div class="text-slate-400 text-xs text-center py-12">لا توجد بيانات كافية لرسم المخطط الشجري</div>';
-                return;
-            }
-
-            // Frequency calculation for Background Specializations
-            const frequencies = {};
-            activeDataset.forEach(row => {
-                const spec = row["التخصص"] || "عام";
-                frequencies[spec] = (frequencies[spec] || 0) + 1;
-            });
-
-            // Sort descending
-            const sortedSpecs = Object.entries(frequencies).sort((a, b) => b[1] - a[1]);
-            const totalItems = activeDataset.length;
-
-            // Generate Treemap colored nodes
-            const colors = [
-                'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/10',
-                'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/10',
-                'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/10',
-                'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-500/10'
+            // Game Assets / Building parts
+            const academyItems = [
+                { id: 'solar', name: 'أجهزة الطاقة الشمسية', icon: '☀️', desc: 'تزويد مبنى التدريب بطاقة متجددة وصديقة للبيئة لتقليل البصمة الكربونية.', stage: 1 },
+                { id: 'library', name: 'المكتبة الرقمية المستدامة', icon: '💻', desc: 'توفير مئات المراجع التفاعلية لترسيخ التعلم مدى الحياة دون استهلاك أوراق.', stage: 1 },
+                { id: 'garden', name: 'الحديقة المجتمعية التفاعلية', icon: '🌳', desc: 'مساحة خضراء تدعم البيئة وتزيد رفاهية وتواصل المتدربين.', stage: 2 },
+                { id: 'classroom', name: 'الفصول الذكية المرنة', icon: '🏫', desc: 'تعتمد التقنيات الحديثة والتعليم الهجين لتقليل تكلفة الانبعاثات والتنقل.', stage: 3 }
             ];
 
-            sortedSpecs.forEach(([spec, count], index) => {
-                const pct = Math.round((count / totalItems) * 100);
-                const colorClass = colors[index % colors.length];
+            // STAGE 1 DATA: Measuring pure conceptual knowledge (Zero Organization names, Zero Individual names)
+            // Fully inspired by "مفهوم التدريب المستدام وأهميته.pptx"
+            const stage1Questions = [
+                {
+                    quote: "أي من الخيارات التالية يعبر بدقة عن 'المفهوم الشامل والغاية الأساسية' للتدريب المستدام؟",
+                    options: [
+                        { name: "عملية تعلم مدى الحياة تهدف لتزويد المتعلمين بالمعرفة والمهارات اللازمة لدعم التنمية بأبعادها الاقتصادية والاجتماعية والبيئية بشكل متكامل.", isCorrect: true, reason: "هذا هو الجوهر المتكامل للتدريب المستدام؛ كونه عملية مستمرة تراعي الأبعاد الثلاثة وتنمي القدرات المستقبلية." },
+                        { name: "برامج تدريبية سريعة ومكثفة تركز فقط على سد الاحتياج المهني المباشر دون النظر للتأثير البيئي أو المجتمعي بعيد المدى.", isCorrect: false, reason: "البرامج السريعة والمحدودة التي تتجاهل البيئة والمجتمع تناقض مفهوم الاستدامة والاستمرارية." },
+                        { name: "عملية تعليمية تقليدية جامدة تعتمد على الحفظ الورقي لتقليل تكلفة البنية التكنولوجية للمؤسسة التدريبية.", isCorrect: false, reason: "التدريب المستدام يحارب الجمود ويسعى للمواءمة الرقمية والبيئية ولا يعتمد على الطرق الورقية التقليدية." },
+                        { name: "دورات تقنية بحتة يتم تصميمها لمرة واحدة فقط دون إمكانية تحديثها لتفادي نفقات الصيانة الإدارية.", isCorrect: false, reason: "عدم قابلية التحديث يتناقض مع ركيزة التكيف المستمر واكتساب المهارات المستقبلية المتغيرة." }
+                    ]
+                },
+                {
+                    quote: "في عالم يتسم بالتغيرات التكنولوجية المتسارعة، ما هي الركيزة الأساسية التي يستند إليها التدريب المستدام لضمان مرونة المتدرب وقابليته للتوظيف المستمر؟",
+                    options: [
+                        { name: "التركيز المطلق على مهارة فنية واحدة شديدة التخصص دون تغييرها طوال الحياة المهنية.", isCorrect: false, reason: "هذا يؤدي لعدم المرونة وفقدان الوظيفة عند أتمتة المهارة؛ فالتدريب المستدام يركز على المهارات القابلة للتكيف." },
+                        { name: "مبدأ 'التعلم مدى الحياة' واكتساب مهارات مستقبلية مرنة تمكن الفرد من التكيف مع التحولات الاقتصادية والاجتماعية.", isCorrect: true, reason: "التعلم مدى الحياة والتكيف هما الركيزتان الذهبيتان لمواكبة تغيرات سوق العمل والتحولات المتسارعة." },
+                        { name: "توفير قاعات تدريب فارهة ومكيفة دون الاهتمام بتحديث المحتوى التدريبي أو مهارات المدرب.", isCorrect: false, reason: "التركيز على المظهر الخارجي والقاعات فقط دون المحتوى الفكري والتكيف المعرفي يهدر الموارد ولا يحقق تنمية حقيقية." },
+                        { name: "جعل التدريب حضورياً وإلزامياً بنسبة 100% لجميع التخصصات دون إتاحة خيارات التعليم المدمج أو المرن.", isCorrect: false, reason: "هذا يقلل مرونة الفرد ويتجاهل تيسير الوصول وتكافؤ الفرص الذي ينادي به البُعد الاجتماعي للمفهوم." }
+                    ]
+                },
+                {
+                    quote: "يسهم التدريب المستدام بشكل مباشر في 'التطوير الشخصي' وصحة المتدرب الذهنية. ما هو التفسير العلمي لهذا الأثر الإيجابي؟",
+                    options: [
+                        { name: "عن طريق فرض اختبارات يومية مشددة وضغوط مستمرة لإجبار الدماغ على الحفظ السريع.", isCorrect: false, reason: "الضغط والتوتر يضران بالصحة العقلية ولا يحققان الرضا الشخصي أو التفكير النقدي المتزن." },
+                        { name: "عن طريق تحفيز الدماغ من خلال التعلم المستمر، بناء الثقة بالنفس، وتوسيع الآفاق الفكرية، مما يعزز الصحة العقلية والرضا الشخصي.", isCorrect: true, reason: "اكتساب مهارات جديدة واستكشاف الشغف ينشط الدماغ، ويقلل التدهور العقلي مع تقدم العمر، ويرفع تقدير الذات والرضا." },
+                        { name: "بتقليل التفاعل الاجتماعي وحصر التعليم في القراءة الفردية الصامتة لتجنب الاختلاف في وجهات النظر.", isCorrect: false, reason: "التدريب المستدام يدعم التفاعل وتوسيع الآفاق الفكرية من خلال التعرف على الأفكار المتنوعة وليس العزلة." },
+                        { name: "بربط قيمة الفرد التدريبية بحجم المكاسب المالية الفورية التي يحققها بعد انتهاء الدورة مباشرة.", isCorrect: false, reason: "هذا تفكير مادي ضيق؛ الاستدامة ترى التطوير الشخصي كعملية تراكمية وبناء شامل للشخصية والقدرة على المساهمة المجتمعية." }
+                    ]
+                },
+                {
+                    quote: "أي من الخيارات التالية يوضح التماسك المفاهيمي لعلاقة التدريب المستدام بالتنمية المستدامة بشكل عام؟",
+                    options: [
+                        { name: "التدريب المستدام يعمل بمعزل تام عن الأنشطة البيئية والمجتمعية، ويركز فقط على الأنشطة الصناعية الصرفة.", isCorrect: false, reason: "هذا تفكير مجتزأ؛ فالاستدامة بطبيعتها مفهوم تكاملي يربط التدريب بكافة ممارسات التنمية." },
+                        { name: "التدريب المستدام استثمار ذاتي ومجتمعي يطور الكوادر البشرية لتصبح واعية ومؤهلة لحفظ البيئة، ودعم المجتمع، وتحقيق النمو الاقتصادي المستقر.", isCorrect: true, reason: "الأفراد المدربون بشكل مستمر يمثلون القوة الدافعة للمساهمة الإيجابية في مجتمعاتهم وحفظ موارد الكوكب للأجيال القادمة." },
+                        { name: "يهدف التدريب المستدام لتجميل الصورة الإعلامية للمؤسسات دون إحداث تغيير حقيقي في سلوكيات وقيم المتدربين.", isCorrect: false, reason: "الاستدامة قائمة على الأثر الحقيقي المستمر وتعديل السلوك وبناء القيم لخدمة البشرية، وليس الدعاية المؤقتة." },
+                        { name: "تقليص فرص التعلم واقتصارها على فئات محددة في المجتمع لضمان سهولة الإدارة والتوجيه.", isCorrect: false, reason: "هذا يتعارض تماماً مع مبدأ العدالة الاجتماعية وتكافؤ الفرص وتمكين المجتمعات الذي يرتكز عليه المفهوم." }
+                    ]
+                }
+            ];
 
-                const block = document.createElement('div');
-                block.className = `${colorClass} p-3.5 rounded-2xl flex flex-col justify-between interactive-card flex-grow shadow-md transition-all cursor-default`;
-                block.style.flexBasis = `${Math.max(pct, 20)}%`; // maintain view spacing
-                block.innerHTML = `
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-xs font-black truncate">${spec}</span>
-                        <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-md font-bold">${pct}%</span>
-                    </div>
-                    <p class="text-[10px] mt-2 font-medium opacity-90">${count} من المشاركين في الشريحة</p>
-                `;
-                container.appendChild(block);
-            });
-        }
+            // STAGE 2 DATA: Sorting into Dimensions
+            const stage2Pool = [
+                { id: 'p1', text: "الحد من استهلاك الورق والموارد الطبيعية أثناء التدريب", dimension: 'environmental', dimensionName: 'البعد البيئي', reason: "يتعلق بحفظ الموارد الطبيعية وحماية البيئة." },
+                { id: 'p2', text: "تحسين مهارات الأفراد لرفع إنتاجيتهم ودعم نمو السوق", dimension: 'economic', dimensionName: 'البعد الاقتصادي', reason: "يسهم في استدامة الأعمال والإنتاجية ومواكبة سوق العمل." },
+                { id: 'p3', text: "تعزيز العدالة الاجتماعية وتكافؤ الفرص في الحصول على المعرفة", dimension: 'social', dimensionName: 'البعد الاجتماعي', reason: "يهدف لبناء مجتمع عادل وشامل يدعم تمكين الجميع." },
+                { id: 'p4', text: "مراعاة البصمة الكربونية للتنقل عبر تقديم خيارات التدريب الرقمي والمدمج", dimension: 'environmental', dimensionName: 'البعد البيئي', reason: "يهدف للحد من الانبعاثات والمخاطر البيئية الناتجة عن التنقل." },
+                { id: 'p5', text: "تطوير مهارات التفكير النقدي وحل المشكلات لزيادة ثقة المتدربين بأنفسهم", dimension: 'social', dimensionName: 'البعد الاجتماعي', reason: "يرتبط بالتطوير الاجتماعي والشخصي وبناء قدرات الإنسان الفردية والمجتمعية." },
+                { id: 'p6', text: "تقليل تكاليف إعادة التدريب من خلال تصميم برامج مرنة وطويلة الأمد ومستمرة", dimension: 'economic', dimensionName: 'البعد الاقتصادي', reason: "يوفر الكلفة المالية ويحقق الاستثمار الأمثل للموارد الاقتصادية للمؤسسات." }
+            ];
 
-        // Render Matrix Heatmap
-        function renderHeatMap() {
-            const tbody = document.getElementById('heatmap-body');
-            tbody.innerHTML = '';
+            // STAGE 3 DATA: Scenario-based decision making
+            const stage3Questions = [
+                {
+                    scenario: "تريد مؤسستك تصميم برنامج تدريبي مستدام للموظفين الجدد حول 'المهارات الرقمية'. ما هي الخطوة الأكثر تجسيداً لقيم التدريب المستدام الشامل؟",
+                    options: [
+                        { text: "تقديمه بشكل مدمج يدمج بين التدريب الرقمي والحضوري، مع توفير المحتوى مدى الحياة وتوجيه الموظفين لتطبيقه لتقليل الهدر.", isCorrect: true, score: 25, reason: "هذا الخيار يدعم التعلم مدى الحياة، ويوائم المهارات المستقبلية ويقلل الأثر البيئي والمالي للمؤسسة." },
+                        { text: "طباعة كتاب تدريبي ضخم ملون لكل موظف وعقد ورشة حضورية إلزامية يومية تتطلب السفر والترحال.", isCorrect: false, score: 0, reason: "هذا الخيار غير مستدام بيئياً (استهلاك ورق كبير) ولا يراعي المهارات الرقمية المدمجة." },
+                        { text: "شراء دورة تدريبية جاهزة من الإنترنت لا يمكن تعديلها أو تحديثها مستقبلاً وعرضها لمرة واحدة فقط.", isCorrect: false, score: 0, reason: "البرامج غير القابلة للتحديث تفتقر لمرونة التدريب المستدام والتعلم طويل الأجل." }
+                    ]
+                },
+                {
+                    scenario: "واجهت ميزانية التدريب السنوية في شركتك عجزاً مالياً حاداً، كيف يتصرف 'المصمم التعليمي المستدام' لمواجهة هذا التحدي الاقتصادي دون التضحية بالمتدربين؟",
+                    options: [
+                        { text: "إلغاء جميع الأنشطة التدريبية فوراً وانتظار ميزانية العام المقبل.", isCorrect: false, score: 0, reason: "إلغاء التدريب يضر بالنمو المهني المستمر وتطور الموظفين." },
+                        { text: "الاعتماد على مبدأ 'نقل المعرفة الداخلي' وتأهيل مدربين من داخل المؤسسة (Train-the-Trainer) لبناء قدرات مستمرة وبكلفة منخفضة.", isCorrect: true, score: 25, reason: "هذا يجسد الاستدامة من خلال تمكين الكوادر الداخلية وبناء مهارات تدوم وتوفر النفقات الاقتصادية." },
+                        { text: "إجبار الموظفين على دفع تكاليف تدريبهم الشخصي خارج أوقات العمل الرسمية بشكل كامل.", isCorrect: false, score: 0, reason: "هذا يخل ببعد العدالة الاجتماعية والمساؤولية المؤسسية للتدريب المستدام." }
+                    ]
+                }
+            ];
 
-            if (activeDataset.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-slate-400 py-12 text-xs">لا تتوفر أي بيانات متطابقة للتصفية الحالية</td></tr>';
-                return;
-            }
-
-            // Draw first 6 trainees under selection for maximum clarity
-            const sampling = activeDataset.slice(0, 6);
-
-            // Coloring Helper Function based on score value
-            const getHeatColorClass = (score) => {
-                if (score >= 90) return 'bg-emerald-100 text-emerald-900 border-emerald-50';
-                if (score >= 80) return 'bg-indigo-100 text-indigo-900 border-indigo-50';
-                if (score >= 70) return 'bg-amber-100 text-amber-900 border-amber-50';
-                return 'bg-rose-100 text-rose-900 border-rose-50';
+            // Helper to unlock items based on progress
+            const unlockItem = (itemId) => {
+                if (!unlockedItems.includes(itemId)) {
+                    setUnlockedItems(prev => [...prev, itemId]);
+                }
             };
 
-            sampling.forEach(row => {
-                const name = row["الاسم"];
-                const ax1 = row["سيناريو المحتوى"] || 0;
-                const ax2 = row["التصميم البصري"] || 0;
-                const ax3 = row["إنتاج الوسائط"] || 0;
-                const ax4 = row["الأنشطة والتقييم"] || 0;
-                const final = row["الدرجة النهائية"] || 0;
+            const handleStage1Answer = (option) => {
+                if (feedback) return; // Prevent multiple clicks
 
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-100 hover:bg-slate-50 transition-colors";
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-800 text-right">${name}</td>
-                    <td class="p-1.5 text-center"><div class="${getHeatColorClass(ax1)} py-2 px-1 rounded-xl font-bold border">${ax1}%</div></td>
-                    <td class="p-1.5 text-center"><div class="${getHeatColorClass(ax2)} py-2 px-1 rounded-xl font-bold border">${ax2}%</div></td>
-                    <td class="p-1.5 text-center"><div class="${getHeatColorClass(ax3)} py-2 px-1 rounded-xl font-bold border">${ax3}%</div></td>
-                    <td class="p-1.5 text-center"><div class="${getHeatColorClass(ax4)} py-2 px-1 rounded-xl font-bold border">${ax4}%</div></td>
-                    <td class="p-3 text-center font-black text-slate-900">${final}%</td>
-                `;
-                tbody.appendChild(tr);
-            });
+                if (option.isCorrect) {
+                    playSound('success');
+                    setScore(prev => prev + 15);
+                    setFeedback({
+                        isCorrect: true,
+                        text: `إجابة رائعة ومعرفة دقيقة! ${option.reason}`
+                    });
+                    // Unlock corresponding stage item
+                    if (stage1Index === 0) unlockItem('solar');
+                    if (stage1Index === 2) unlockItem('library');
+                } else {
+                    playSound('error');
+                    setWrongAnswers(prev => prev + 1);
+                    setFeedback({
+                        isCorrect: false,
+                        text: `بحاجة إلى إعادة تفكير! ${option.reason}`
+                    });
+                }
+            };
+
+            const nextStage1Question = () => {
+                setFeedback(null);
+                if (stage1Index < stage1Questions.length - 1) {
+                    setStage1Index(prev => prev + 1);
+                } else {
+                    // Transition to Stage 2
+                    setCurrentStage(2);
+                }
+            };
+
+            const handleStage2Sort = (item, selectedDimension) => {
+                if (stage2Sorted.includes(item.id)) return;
+
+                if (item.dimension === selectedDimension) {
+                    playSound('success');
+                    setScore(prev => prev + 15);
+                    setStage2Sorted(prev => [...prev, item.id]);
+                    setFeedback({
+                        isCorrect: true,
+                        text: `صحيح! "${item.text}" يقع مباشرة ضمن [${item.dimensionName}]. ${item.reason}`
+                    });
+                    // Unlock garden on progress
+                    if (stage2Sorted.length >= 2) {
+                        unlockItem('garden');
+                    }
+                } else {
+                    playSound('error');
+                    setWrongAnswers(prev => prev + 1);
+                    setFeedback({
+                        isCorrect: false,
+                        text: `غير دقيق! المفهوم لا ينتمي إلى هذا البعد. تذكر: ${item.reason}`
+                    });
+                }
+            };
+
+            const checkStage2Completion = () => {
+                setFeedback(null);
+                if (stage2Sorted.length === stage2Pool.length) {
+                    setCurrentStage(3);
+                }
+            };
+
+            const handleStage3Answer = (option) => {
+                if (feedback) return;
+
+                if (option.isCorrect) {
+                    playSound('success');
+                    setScore(prev => prev + 20);
+                    setFeedback({
+                        isCorrect: true,
+                        text: `أنت مبدع وقائد ذكي! ${option.reason}`
+                    });
+                    unlockItem('classroom');
+                } else {
+                    playSound('error');
+                    setWrongAnswers(prev => prev + 1);
+                    setFeedback({
+                        isCorrect: false,
+                        text: `قرار بحاجة إلى تعديل مالي أو بيئي! ${option.reason}`
+                    });
+                }
+            };
+
+            const nextStage3Question = () => {
+                setFeedback(null);
+                if (stage3Index < stage3Questions.length - 1) {
+                    setStage3Index(prev => prev + 1);
+                } else {
+                    // End Game!
+                    playSound('complete');
+                    setScreen('outro');
+                }
+            };
+
+            const restartGame = () => {
+                setScore(0);
+                setWrongAnswers(0);
+                setUnlockedItems([]);
+                setFeedback(null);
+                setStage1Index(0);
+                setStage2Sorted([]);
+                setStage3Index(0);
+                setCurrentStage(1);
+                setScreen('play');
+            };
+
+            return (
+                <div class="w-full">
+                    {/* Header Bar */}
+                    <header class="mb-6 text-center">
+                        <div class="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md animate-pulse">
+                            <span>🎓 نشاط مدخلي تفاعلي ممتع</span>
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-emerald-800 mt-2">مفهوم التدريب المستدام وأهميته</h1>
+                        <p class="text-emerald-600 text-sm md:text-base mt-1 font-medium">اختبر معلوماتك وقدرتك على التفكير النقدي لتشييد أكاديميتك الخضراء!</p>
+                    </header>
+
+                    {/* INTRO SCREEN */}
+                    {screen === 'intro' && (
+                        <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl text-center border-t-8 border-emerald-500 transform transition duration-500 hover:scale-[1.01]">
+                            <div class="text-6xl md:text-7xl mb-4 animate-bounce-slow">🏫</div>
+                            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-4">أهلاً بك يا بطل الاستدامة المعرفي!</h2>
+                            <p class="text-slate-600 leading-relaxed mb-6 max-w-xl mx-auto text-sm md:text-base">
+                                مرحباً بك في هذا التحدي المصمم خصيصاً لقياس معارفك العميقة حول 
+                                <strong class="text-emerald-700"> ركائز التدريب المستدام </strong> 
+                                وأبعاده الحيوية.
+                                <br />
+                                كل إجابة صحيحة ستكسبك معدات لتطوير وبناء <strong class="text-emerald-700">أكاديمية تدريب افتراضية متكاملة</strong> وصديقة للبيئة!
+                            </p>
+
+                            <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 mb-8 text-right max-w-lg mx-auto">
+                                <h4 class="font-bold text-emerald-800 mb-2 flex items-center gap-2 text-sm md:text-base">📌 فكرة اللعبة ورسالتها:</h4>
+                                <p class="text-xs md:text-sm text-emerald-700 leading-relaxed">
+                                    التدريب المستدام ليس مجرد وعاء لتخزين معلومات عابرة؛ بل هو عملية تعلم مستمرة واستثمار في الذات يعزز الصحة العقلية، ويرتقي بالإنتاجية، ويوائم بين حماية الطبيعة ونمو المجتمع والاقتصاد.
+                                </p>
+                            </div>
+
+                            <button 
+                                onClick={() => { playSound('success'); setScreen('play'); }}
+                                class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base md:text-lg px-8 py-4 rounded-2xl shadow-xl hover:shadow-emerald-200 transition-all duration-300 transform active:scale-95 flex items-center gap-3 mx-auto"
+                            >
+                                🚀 ابدأ التحدي وابنِ أكاديميتك المعرفية
+                            </button>
+                        </div>
+                    )}
+
+                    {/* PLAY SCREEN */}
+                    {screen === 'play' && (
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            
+                            {/* Left Panel: Game Play & Questions */}
+                            <div class="lg:col-span-2 flex flex-col gap-6">
+                                
+                                {/* Progress Indicator */}
+                                <div class="glass-card rounded-2xl p-4 shadow-md flex justify-between items-center text-xs md:text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-700">المرحلة:</span>
+                                        <span class="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-bold">
+                                            {currentStage === 1 && "1. قياس مفاهيم وركائز الاستدامة"}
+                                            {currentStage === 2 && "2. فرز أبعاد الاستدامة الثلاثة"}
+                                            {currentStage === 3 && "3. سيناريوهات اتخاذ القرار الحكيم"}
+                                        </span>
+                                    </div>
+                                    <div class="flex gap-4">
+                                        <span class="text-emerald-700 font-bold">⭐ النقاط: {score}</span>
+                                        <span class="text-red-500 font-bold">⚠️ الأخطاء: {wrongAnswers}</span>
+                                    </div>
+                                </div>
+
+                                {/* STAGE 1: CONCEPTUAL DEFINITIONS MATCHING */}
+                                {currentStage === 1 && (
+                                    <div class="glass-card rounded-3xl p-6 shadow-lg border-r-8 border-indigo-500 flex-1">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-1 rounded-full">سؤال {stage1Index + 1} من {stage1Questions.length}</span>
+                                            <span class="text-xs text-slate-400">اختر المفهوم المعرفي الأكثر دقة</span>
+                                        </div>
+
+                                        <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 mb-6 relative">
+                                            <span class="absolute -top-4 right-4 text-3xl text-indigo-300">"</span>
+                                            <p class="text-slate-700 font-semibold leading-relaxed text-sm md:text-base pr-3">
+                                                {stage1Questions[stage1Index].quote}
+                                            </p>
+                                        </div>
+
+                                        {!feedback ? (
+                                            <div class="grid grid-cols-1 gap-3">
+                                                {stage1Questions[stage1Index].options.map((option, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        onClick={() => handleStage1Answer(option)}
+                                                        class="bg-white hover:bg-indigo-50 border border-indigo-100 text-slate-700 font-bold p-3.5 rounded-xl text-right text-xs md:text-sm shadow-sm transition-all duration-200 hover:border-indigo-400 active:scale-[0.99] block w-full"
+                                                    >
+                                                        💡 {option.name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div class={`rounded-2xl p-4 mb-6 border text-right transition-all duration-300 ${feedback.isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+                                                <h4 class="font-bold flex items-center gap-2 text-sm md:text-base mb-1">
+                                                    {feedback.isCorrect ? "✅ معمار معرفي ممتاز!" : "❌ محاولة تحتاج مراجعة!"}
+                                                </h4>
+                                                <p class="text-xs md:text-sm leading-relaxed">{feedback.text}</p>
+                                                <button
+                                                    onClick={nextStage1Question}
+                                                    class="mt-4 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all"
+                                                >
+                                                    التالي ➔
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* STAGE 2: SORTING TO DIMENSIONS */}
+                                {currentStage === 2 && (
+                                    <div class="glass-card rounded-3xl p-6 shadow-lg border-r-8 border-teal-500 flex-1">
+                                        <div class="mb-4">
+                                            <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-1 rounded-full">أبعاد التنمية المستدامة الثلاثة</span>
+                                            <h3 class="text-lg font-bold text-slate-800 mt-2">فرز الأهداف والأبعاد</h3>
+                                            <p class="text-xs text-slate-500 mt-1">اضغط على المفهوم بالأسفل، ثم اختر البعد الصحيح له من الخيارات الثلاثة.</p>
+                                        </div>
+
+                                        {/* Find the first unsorted item */}
+                                        {stage2Pool.find(item => !stage2Sorted.includes(item.id)) ? (
+                                            (() => {
+                                                const currentItem = stage2Pool.find(item => !stage2Sorted.includes(item.id));
+                                                return (
+                                                    <div class="flex flex-col gap-6">
+                                                        <div class="bg-teal-50 border border-teal-100 p-4 rounded-2xl text-center shadow-inner">
+                                                            <span class="text-xs text-teal-600 font-bold">المفهوم المراد فرزه:</span>
+                                                            <p class="text-base md:text-lg font-extrabold text-teal-900 mt-1 leading-relaxed">
+                                                                "{currentItem.text}"
+                                                            </p>
+                                                        </div>
+
+                                                        {!feedback ? (
+                                                            <div class="grid grid-cols-3 gap-2">
+                                                                <button
+                                                                    onClick={() => handleStage2Sort(currentItem, 'environmental')}
+                                                                    class="bg-green-100 hover:bg-green-200 text-green-800 font-bold py-4 px-2 rounded-xl text-center text-xs md:text-sm shadow-sm transition-all border border-green-200"
+                                                                >
+                                                                    🌱 بيئي
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleStage2Sort(currentItem, 'social')}
+                                                                    class="bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-4 px-2 rounded-xl text-center text-xs md:text-sm shadow-sm transition-all border border-blue-200"
+                                                                >
+                                                                    🤝 اجتماعي
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleStage2Sort(currentItem, 'economic')}
+                                                                    class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-4 px-2 rounded-xl text-center text-xs md:text-sm shadow-sm transition-all border border-amber-200"
+                                                                >
+                                                                    💰 اقتصادي
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <div class={`rounded-2xl p-4 border text-right transition-all duration-300 ${feedback.isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+                                                                <h4 class="font-bold flex items-center gap-2 text-sm mb-1">
+                                                                    {feedback.isCorrect ? "✅ تصنيف رائع وموفق!" : "❌ تصنيف خاطئ!"}
+                                                                </h4>
+                                                                <p class="text-xs leading-relaxed">{feedback.text}</p>
+                                                                <button
+                                                                    onClick={checkStage2Completion}
+                                                                    class="mt-4 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all"
+                                                                >
+                                                                    المفهوم التالي ➔
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()
+                                        ) : (
+                                            <div class="text-center py-6">
+                                                <div class="text-5xl mb-2">🎉</div>
+                                                <p class="text-emerald-800 font-bold mb-4">أنهيت فرز جميع المفاهيم بنجاح مذهل!</p>
+                                                <button
+                                                    onClick={() => { playSound('success'); setCurrentStage(3); }}
+                                                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl shadow"
+                                                >
+                                                    الانتقال للمرحلة الثالثة
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Sorted items list */}
+                                        <div class="mt-6 border-t border-slate-100 pt-4">
+                                            <span class="text-xs font-bold text-slate-400">العناصر التي قمت بفرزها حتى الآن ({stage2Sorted.length}/{stage2Pool.length}):</span>
+                                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                                {stage2Pool.map(item => {
+                                                    const isSorted = stage2Sorted.includes(item.id);
+                                                    return (
+                                                        <span
+                                                            key={item.id}
+                                                            class={`text-[10px] px-2 py-1 rounded-md border ${isSorted ? 'bg-emerald-50 border-emerald-200 text-emerald-700 font-semibold' : 'bg-slate-50 border-slate-200 text-slate-300'}`}
+                                                        >
+                                                            {isSorted ? `✓ ${item.text.slice(0, 25)}...` : `⏳ قيد الفرز`}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* STAGE 3: DECISION SCENARIOS */}
+                                {currentStage === 3 && (
+                                    <div class="glass-card rounded-3xl p-6 shadow-lg border-r-8 border-amber-500 flex-1">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-full">سؤال {stage3Index + 1} من {stage3Questions.length}</span>
+                                            <span class="text-xs text-slate-400">مواقف قيادية مستدامة</span>
+                                        </div>
+
+                                        <div class="bg-amber-50 border border-amber-100 p-4 rounded-2xl mb-6">
+                                            <span class="text-xs text-amber-800 font-extrabold flex items-center gap-1">🤔 سيناريو عملي:</span>
+                                            <p class="text-slate-800 font-bold leading-relaxed text-sm md:text-base mt-2">
+                                                {stage3Questions[stage3Index].scenario}
+                                            </p>
+                                        </div>
+
+                                        {!feedback ? (
+                                            <div class="flex flex-col gap-3">
+                                                {stage3Questions[stage3Index].options.map((option, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        onClick={() => handleStage3Answer(option)}
+                                                        class="bg-white hover:bg-amber-50 border border-amber-100 text-slate-700 font-semibold p-4 rounded-xl text-right text-xs md:text-sm shadow-sm transition-all duration-200 hover:border-amber-400 active:scale-95"
+                                                    >
+                                                        🔸 {option.text}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div class={`rounded-2xl p-4 mb-6 border text-right transition-all duration-300 ${feedback.isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+                                                <h4 class="font-bold flex items-center gap-2 text-sm md:text-base mb-1">
+                                                    {feedback.isCorrect ? "✅ خيار قيادي حكيم!" : "❌ قرار بحاجة إلى تعديل مالي وبيئي!"}
+                                                </h4>
+                                                <p class="text-xs md:text-sm leading-relaxed">{feedback.text}</p>
+                                                <button
+                                                    onClick={nextStage3Question}
+                                                    class="mt-4 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all"
+                                                >
+                                                    التالي ➔
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                            </div>
+
+                            {/* Right Panel: Virtual Training Academy Status */}
+                            <div class="glass-card rounded-3xl p-6 shadow-lg border-t-4 border-emerald-600 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-lg font-extrabold text-slate-800 mb-2 flex items-center gap-1">
+                                        🏢 أكاديميتك المستدامة
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                                        الإجابات الصحيحة في المستويات الثلاثة ستقوم ببناء وترقية أجزاء أكاديميتك الافتراضية!
+                                    </p>
+
+                                    {/* Visual Representation of Academy */}
+                                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-4 text-white text-center shadow-inner min-h-[160px] flex flex-col justify-center items-center relative overflow-hidden">
+                                        <div class="absolute top-2 right-2 bg-white/20 backdrop-filter blur-sm px-2 py-0.5 rounded text-[10px] font-bold">
+                                            مستوى البناء
+                                        </div>
+                                        
+                                        {/* Icons stack based on unlocked items */}
+                                        <div class="flex gap-3 justify-center text-4xl mb-3">
+                                            <span class="unlocked-item">🏫</span>
+                                            {unlockedItems.includes('solar') && <span class="unlocked-item" title="ألواح شمسية">☀️</span>}
+                                            {unlockedItems.includes('library') && <span class="unlocked-item" title="مكتبة رقمية">💻</span>}
+                                            {unlockedItems.includes('garden') && <span class="unlocked-item" title="حديقة مجتمعية">🌳</span>}
+                                            {unlockedItems.includes('classroom') && <span class="unlocked-item" title="فصول ذكية">📱</span>}
+                                        </div>
+
+                                        <p class="text-sm font-extrabold">
+                                            {unlockedItems.length === 0 && "أكاديمية تدريب ناشئة"}
+                                            {unlockedItems.length > 0 && unlockedItems.length < 3 && "أكاديمية في مرحلة التأسيس الصديق للبيئة"}
+                                            {unlockedItems.length >= 3 && unlockedItems.length < 4 && "أكاديمية مستدامة متقدمة"}
+                                            {unlockedItems.length === 4 && "أكاديمية الغد المستدامة المتكاملة! 🏆"}
+                                        </p>
+                                        <span class="text-[10px] text-emerald-100 mt-1">
+                                            لقد قمت بفتح {unlockedItems.length} من أصل 4 ترقيات
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6">
+                                    <h4 class="font-bold text-slate-700 text-xs mb-2">الترقيات المفتوحة بالأكاديمية:</h4>
+                                    <div class="flex flex-col gap-2">
+                                        {academyItems.map(item => {
+                                            const isUnlocked = unlockedItems.includes(item.id);
+                                            return (
+                                                <div 
+                                                    key={item.id} 
+                                                    class={`flex items-start gap-2.5 p-2 rounded-xl border text-right transition-all ${isUnlocked ? 'bg-emerald-50/50 border-emerald-200' : 'bg-slate-50 border-slate-200 opacity-50'}`}
+                                                >
+                                                    <span class="text-xl bg-white p-1 rounded-lg shadow-sm">{item.icon}</span>
+                                                    <div>
+                                                        <h5 class="text-xs font-bold text-slate-800 flex items-center gap-1">
+                                                            {item.name}
+                                                            {isUnlocked && <span class="text-[10px] text-emerald-600 bg-emerald-100 px-1 py-0.2 rounded">نشط</span>}
+                                                        </h5>
+                                                        <p class="text-[10px] text-slate-500 mt-0.5 leading-snug">{item.desc}</p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    )}
+
+                    {/* OUTRO SCREEN */}
+                    {screen === 'outro' && (
+                        <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl text-center border-t-8 border-emerald-600 relative overflow-hidden">
+                            <div class="text-6xl md:text-7xl mb-4 animate-bounce-slow">🏆</div>
+                            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">تهانينا الحارة! لقد بنيت الأكاديمية بنجاح!</h2>
+                            <p class="text-slate-600 text-sm md:text-base leading-relaxed mb-6 max-w-xl mx-auto">
+                                لقد اجتزت بنجاح جميع مستويات التدريب وعززت معرفتك بأسس وأبعاد التدريب المستدام. أكاديميتك الآن مجهزة بأحدث الفصول الذكية، الطاقة المتجددة، الحدائق التفاعلية، والتقنيات الصديقة للبيئة.
+                            </p>
+
+                            {/* Final Score Dashboard */}
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                                <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
+                                    <span class="text-xs text-indigo-600 font-bold block mb-1">النقاط الكلية ⭐</span>
+                                    <span class="text-2xl font-extrabold text-indigo-900">{score}</span>
+                                </div>
+                                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+                                    <span class="text-xs text-emerald-600 font-bold block mb-1">نسبة النجاح 🚀</span>
+                                    <span class="text-2xl font-extrabold text-emerald-900">
+                                        {Math.round((score / 130) * 100)}%
+                                    </span>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+                                    <span class="text-xs text-amber-600 font-bold block mb-1">محاولات غير دقيقة ⚠️</span>
+                                    <span class="text-2xl font-extrabold text-amber-900">{wrongAnswers}</span>
+                                </div>
+                            </div>
+
+                            {/* Educational Takeaway Summary */}
+                            <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 text-right max-w-xl mx-auto mb-8">
+                                <h4 class="font-bold text-emerald-800 text-sm md:text-base mb-3 flex items-center gap-2">
+                                    📚 ملخص المفاهيم التي اختبرتها في اللعبة:
+                                </h4>
+                                <ul class="text-xs md:text-sm text-emerald-700 space-y-2.5 leading-relaxed">
+                                    <li>🔄 <strong>التعلم مدى الحياة:</strong> ركيزة أساسية تضمن التطوير والتكيف المستمر للأفراد في بيئة العمل السريعة.</li>
+                                    <li>🌱 <strong>تكامل الأبعاد الثلاثة:</strong> التدريب المستدام الناجح يراعي الجوانب الاقتصادية (الإنتاجية والكفاءة)، والاجتماعية (العدالة والتمكين)، والبيئية (الموارد والمناخ).</li>
+                                    <li>🧠 <strong>التطوير الشخصي والصحة الذهنية:</strong> التدريب المستمر يوسع الآفاق، ينمي الثقة بالنفس، ويحافظ على شباب الدماغ وصحته العقلية.</li>
+                                    <li>⚙️ <strong>المرونة والتكيف:</strong> تصميم البرامج القابلة للتحديث والتطوير هو ما يقي الكوادر والمؤسسات من مخاطر التغير الاقتصادي الحاد.</li>
+                                </ul>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                                <button 
+                                    onClick={restartGame}
+                                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-md transition-all active:scale-95"
+                                >
+                                    🔄 العب مرة أخرى
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        const text = `حققت نتيجة ${score} في لعبة التدريب المستدام المعرفية وبنيت الأكاديمية بنجاح!`;
+                                        const el = document.createElement('textarea');
+                                        el.value = text;
+                                        document.body.appendChild(el);
+                                        el.select();
+                                        document.execCommand('copy');
+                                        document.body.removeChild(el);
+                                        playSound('success');
+                                    }}
+                                    class="bg-slate-800 hover:bg-slate-950 text-white font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-md transition-all active:scale-95"
+                                >
+                                    📋 نسخ النتيجة لمشاركتها مع المتدربين
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
         }
 
-        // Formulate dynamic smart analytical report
-        function updateAIReport() {
-            const count = activeDataset.length;
-            if (count === 0) {
-                document.getElementById('ai-patterns-list').innerHTML = '<li class="text-xs text-slate-400">لا توجد بيانات كافية لإجراء التحليل الإحصائي.</li>';
-                document.getElementById('ai-relations-list').innerHTML = '<li class="text-xs text-slate-400">يرجى تعديل خيارات التصفية لتغذية محرك التحليل.</li>';
-                document.getElementById('ai-recommendations-list').innerHTML = '<li class="text-xs text-slate-400">يرجى مراجعة التصفية.</li>';
-                document.getElementById('ai-correlation-label').innerText = 'لا تتوفر بيانات';
-                document.getElementById('ai-correlation-desc').innerText = '';
-                return;
-            }
-
-            // Calculations
-            const finalScores = activeDataset.map(r => r["الدرجة النهائية"]);
-            const totalFinal = finalScores.reduce((sum, v) => sum + v, 0);
-            const averageScore = parseFloat((totalFinal / count).toFixed(1));
-
-            // Axes summary averages
-            let ax1Sum = 0, ax2Sum = 0, ax3Sum = 0, ax4Sum = 0;
-            activeDataset.forEach(r => {
-                ax1Sum += r["سيناريو المحتوى"] || 0;
-                ax2Sum += r["التصميم البصري"] || 0;
-                ax3Sum += r["إنتاج الوسائط"] || 0;
-                ax4Sum += r["الأنشطة والتقييم"] || 0;
-            });
-            const ax1Avg = parseFloat((ax1Sum / count).toFixed(1));
-            const ax2Avg = parseFloat((ax2Sum / count).toFixed(1));
-            const ax3Avg = parseFloat((ax3Sum / count).toFixed(1));
-            const ax4Avg = parseFloat((ax4Sum / count).toFixed(1));
-
-            const axesList = [
-                { name: 'سيناريو المحتوى التعليمي', avg: ax1Avg },
-                { name: 'التصميم البصري والتفاعلية', avg: ax2Avg },
-                { name: 'إنتاج ونشر الوسائط المتعددة', avg: ax3Avg },
-                { name: 'تصميم الأنشطة والتقييم', avg: ax4Avg }
-            ].sort((a, b) => b.avg - a.avg);
-
-            const highestAxis = axesList[0];
-            const lowestAxis = axesList[axesList.length - 1];
-
-            // Trainees underperforming (< 75%)
-            const riskCount = activeDataset.filter(r => r["الدرجة النهائية"] < 75).length;
-            const riskPercentage = Math.round((riskCount / count) * 100);
-
-            // Age & Score Correlation Coefficient Direction (Simplified algorithm)
-            // Calculating direction (covariance)
-            const avgAge = activeDataset.reduce((sum, r) => sum + r["العمر"], 0) / count;
-            let covariance = 0;
-            activeDataset.forEach(r => {
-                covariance += (r["العمر"] - avgAge) * (r["الدرجة النهائية"] - averageScore);
-            });
-
-            let correlationLabel = "ارتباط سلبي غير ملحوظ";
-            let correlationDesc = "لا تظهر المؤشرات أثرًا جوهريًا للعمر على الدرجة.";
-            if (covariance > 5) {
-                correlationLabel = "ارتباط طردي إيجابي";
-                correlationDesc = "يتحسن الأداء الإجمالي طرديًا وبشكل طفيف مع النضج والتقدم بالعمر.";
-            } else if (covariance < -5) {
-                correlationLabel = "ارتباط عكسي سلبي";
-                correlationDesc = "المتدربون من الفئة العمرية الشابة يسجلون معدلات درجات أعلى بشكل نسبي.";
-            }
-
-            document.getElementById('ai-correlation-label').innerText = correlationLabel;
-            document.getElementById('ai-correlation-desc').innerText = correlationDesc;
-
-            // 1. POPULATE DISCOVERED PATTERNS
-            const patternsHtml = `
-                <li class="flex items-start gap-2 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800">
-                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
-                    <span>تفوّق مميز لدى المتدربين في محور <strong>"${highestAxis.name}"</strong> بمتوسط كفاءة بلغ <strong>${highestAxis.avg}%</strong>.</span>
-                </li>
-                <li class="flex items-start gap-2 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800">
-                    <i data-lucide="help-circle" class="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0"></i>
-                    <span>يبرز محور <strong>"${lowestAxis.name}"</strong> كأكبر نقطة ضعف جماعية بمتوسط أداء <strong>${lowestAxis.avg}%</strong>.</span>
-                </li>
-                <li class="flex items-start gap-2 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800">
-                    <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400 mt-0.5 flex-shrink-0"></i>
-                    <span>يُصنف <strong>${riskCount}</strong> من المتدربين (${riskPercentage}%) تحت خط الكفاءة المتقدمة (أقل من 75 درجة)، مما يستدعي جلسات إشراف سريعة.</span>
-                </li>
-            `;
-            document.getElementById('ai-patterns-list').innerHTML = patternsHtml;
-
-            // 2. POPULATE RELATIONS
-            const relationsHtml = `
-                <li class="flex items-start gap-2">
-                    <i data-lucide="activity" class="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0"></i>
-                    <span><strong>الارتباط المكتشف:</strong> ${correlationDesc}</span>
-                </li>
-                <li class="flex items-start gap-2">
-                    <i data-lucide="users" class="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0"></i>
-                    <span><strong>توزيع النوع:</strong> تمثل الإناث نسبة أداء مستقرة، بينما يظهر الذكور معدل تباعد وانحراف معياري أوسع بين الحدود العليا والبعدية للدرجات.</span>
-                </li>
-            `;
-            document.getElementById('ai-relations-list').innerHTML = relationsHtml;
-
-            // 3. POPULATE STRATEGIC ADVISORIES
-            const advisoriesHtml = `
-                <li class="flex items-start gap-2 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800">
-                    <i data-lucide="arrow-up-circle" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
-                    <span>تكثيف الورش التطبيقية المباشرة حول <strong>"${lowestAxis.name}"</strong> عبر الاستعانة ببرمجيات التأليف والتصميم السحابية لتسريع الإنتاج.</span>
-                </li>
-                <li class="flex items-start gap-2 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800">
-                    <i data-lucide="users" class="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0"></i>
-                    <span>تطبيق استراتيجية "التوجيه بالأقران" لدمج الخبراء من تخصص "تصميم الجرافيك" مع زملائهم من التخصصات التربوية لتحقيق توازن فني متقدم.</span>
-                </li>
-                <li class="flex items-start gap-2 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0"></i>
-                    <span>توفير دليل إجراءات رقمي تفصيلي ومكتبة موارد وقوالب جاهزة لتقليص هدر الوقت خلال تجميع ونشر الوسائط المتعددة.</span>
-                </li>
-            `;
-            document.getElementById('ai-recommendations-list').innerHTML = advisoriesHtml;
-
-            // Initialize Lucide icons on newly generated items
-            lucide.createIcons();
-        }
-
-        // Export complete dashboard as High Quality PNG Image
-        function exportDashboard() {
-            const root = document.getElementById('dashboard-capture-root');
-            
-            // Visual enhancement tweaks prior capture
-            root.style.padding = "20px";
-            root.style.backgroundColor = "#f8fafc";
-            root.style.borderRadius = "24px";
-            
-            showNotification('يرجى الانتظار، يجري تحضير وبناء الصورة عالية الدقة...', 'success');
-
-            html2canvas(root, {
-                scale: 2.2, // Retina display quality rendering
-                useCORS: true,
-                backgroundColor: '#f8fafc',
-                logging: false
-            }).then(canvas => {
-                root.style.padding = "";
-                root.style.backgroundColor = "";
-                root.style.borderRadius = "";
-
-                const link = document.createElement('a');
-                link.download = 'تقرير_لوحة_معلومات_الأداء_التدريبي_الشامل.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                showNotification('تم تحميل اللوحة كصورة بنجاح!', 'success');
-            }).catch(err => {
-                console.error(err);
-                showNotification('حدث خطأ فني أثناء تصدير اللوحة كصورة.', 'error');
-                root.style.padding = "";
-                root.style.backgroundColor = "";
-                root.style.borderRadius = "";
-            });
-        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
