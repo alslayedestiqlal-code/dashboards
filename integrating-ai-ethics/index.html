@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دمج الذكاء الاصطناعي في التدريب المستدام - أخلاقيات الذكاء الاصطناعي</title>
+    <!-- استيراد خطوط Google Fonts وتحديداً خط "التاج وال" المهني والأكاديمي -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* الإعدادات الأساسية لضمان ثبات الأبعاد 1280x720 وعدم اقتطاع أي محتوى */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: #0f172a; /* خلفية داكنة راقية لإبراز لوحة العرض */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* حاوية العرض التقديمي الرئيسية بأبعاد معيارية ثابتة لمنع التشوهات */
+        #presentation-wrapper {
+            width: 1280px;
+            height: 720px;
+            background-color: #f8fafc;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        /* تخصيص شريط التمرير الداخلي في حال زيادة النصوص لضمان عدم اقتطاعها */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* حركات الانتقال السلسة بين الشرائح */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-wrapper">
+        
+        <!-- الهيكل الداخلي للمحتوى واللوحة الجانبية -->
+        <div id="main-body" class="flex flex-grow h-[calc(100%-70px)]">
+            
+            <!-- لوحة التنقل الجانبية الموحدة والمحدثة -->
+            <div id="sidebar" class="w-[300px] bg-slate-900 border-l border-slate-800 flex flex-col p-6 text-slate-100 z-10 flex-shrink-0">
+                <div class="logo-area flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
+                    <i class="fa-solid fa-graduation-cap text-sky-400 text-2xl animate-pulse"></i>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">أدوات ذكية لتدريب مستدام</h3>
+                    </div>
+                </div>
+                
+                <!-- قائمة المحاور مع تجميع الشرائح بوضوح -->
+                <ul class="nav-menu flex flex-col gap-2 flex-grow overflow-y-auto custom-scrollbar pr-1 text-sm">
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(0)">
+                        <i class="fa-solid fa-house text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">الصفحة الرئيسية</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(1)">
+                        <i class="fa-solid fa-star text-sky-500 w-5 text-center"></i> 
+                        <span>المقدمة</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(2)">
+                        <i class="fa-solid fa-arrows-spin text-sky-500 w-5 text-center"></i> 
+                        <span>مفهوم الدمج</span>
+                    </li>
+                    
+                    <!-- قسم خطوات الدمج الفرعي -->
+                    <div class="text-[11px] text-slate-500 font-bold uppercase mt-2 px-3 tracking-wider">خطوات الدمج</div>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(3)">
+                        <i class="fa-solid fa-chart-pie text-sky-500 w-4 text-center"></i> 
+                        <span>1. تقييم الوضع وتحليل المحتوى</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(4)">
+                        <i class="fa-solid fa-bullseye text-sky-500 w-4 text-center"></i> 
+                        <span>2. تحديد الأهداف التدريبية</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(5)">
+                        <i class="fa-solid fa-layer-group text-sky-500 w-4 text-center"></i> 
+                        <span>3. تطوير المحتوى ووحداته</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(6)">
+                        <i class="fa-solid fa-laptop-code text-sky-500 w-4 text-center"></i> 
+                        <span>4. التطبيقات والمشاريع العملية</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(7)">
+                        <i class="fa-solid fa-chalkboard-user text-sky-500 w-4 text-center"></i> 
+                        <span>5. التدريب وتبادل المعرفة</span>
+                    </li>
+
+                    <!-- قسم أخلاقيات الذكاء الفرعي -->
+                    <div class="text-[11px] text-slate-500 font-bold uppercase mt-2 px-3 tracking-wider">الأخلاقيات والاستدامة</div>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(8)">
+                        <i class="fa-solid fa-scale-balanced text-sky-500 w-4 text-center"></i> 
+                        <span>المقدمة والمسؤولية</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(9)">
+                        <i class="fa-solid fa-user-shield text-sky-500 w-4 text-center"></i> 
+                        <span>الخصوصية وحماية البيانات</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(10)">
+                        <i class="fa-solid fa-equals text-sky-500 w-4 text-center"></i> 
+                        <span>مبدأ عدم التمييز والعدالة</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(11)">
+                        <i class="fa-solid fa-eye text-sky-500 w-4 text-center"></i> 
+                        <span>الشفافية والمساءلة</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(12)">
+                        <i class="fa-solid fa-users-viewfinder text-sky-500 w-4 text-center"></i> 
+                        <span>التأثير على العلاقات الإنسانية</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(13)">
+                        <i class="fa-solid fa-leaf text-sky-500 w-4 text-center"></i> 
+                        <span>الاستدامة والبيئة</span>
+                    </li>
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(14)">
+                        <i class="fa-solid fa-square-poll-horizontal text-sky-500 w-4 text-center"></i> 
+                        <span>الخلاصة والالتزام الأخلاقي</span>
+                    </li>
+
+                    <li class="nav-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white mt-2" onclick="goToSlide(15)">
+                        <i class="fa-solid fa-clipboard-question text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">تقييم الفهم المعرفي</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- منفذ عرض الشرائح التفاعلي -->
+            <div id="slide-viewport" class="flex-grow relative bg-slate-50">
+
+                <!-- الشريحة 0: الشريحة الافتتاحية المحدثة بالعنوان المحدد بدقة -->
+                <div class="slide flex flex-col justify-between p-12 bg-slate-900 text-white active">
+                    <div class="flex justify-between items-center">
+                        <span class="bg-sky-500/10 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold border border-sky-500/20">
+                            أدوات ذكية لتدريب مستدام
+                        </span>
+                    </div>
+                    <div class="my-auto text-right max-w-4xl">
+                        <h1 class="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
+                            دمج الذكاء الاصطناعي في التدريب المستدام - <br>
+                            <span class="text-sky-400 bg-clip-text">أخلاقيات الذكاء الاصطناعي</span>
+                        </h1>
+                        <div class="flex gap-4">
+                            <button onclick="nextSlide()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-sky-500/20 transition-all text-sm flex items-center gap-2">
+                                ابدأ العرض التفاعلي <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-800 pt-4 flex justify-between text-xs text-slate-500">
+                        <span>المحور الثالث: دمج الذكاء الاصطناعي لأجل تدريب مستدام</span>
+                        <span>بوابة التدريب الذكية © 2026</span>
+                    </div>
+                </div>
+
+                <!-- الشريحة 1: المقدمة -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">المقدمة</h2>
+                        <p class="text-sm text-slate-500">مواكبة المتغيرات التقنية الحديثة وإعادة صياغة الأساليب التقليدية.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <p class="text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    يشهد العالم اليوم ثورة تكنولوجية هائلة، حيث بات الذكاء الاصطناعي يحظى باهتمام كبير ومتزايد يفرض إعادة صياغة ممارسات التنمية البشرية والتعليم المستمر.
+                                </p>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-circle-check text-sky-600 mt-1"></i>
+                                        <span><strong>إعادة النظر في الأساليب التقليدية:</strong> هذا التطور المتسارع يفرض علينا إعادة النظر في أساليبنا التقليدية في التدريب الذي يعد أساساً للتعلم المستدام.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-circle-check text-sky-600 mt-1"></i>
+                                        <span><strong>البحث عن طرق مبتكرة ومدروسة:</strong> إيجاد سبل ممنهجة لدمج هذه التقنيات الحديثة في بيئات التعلم والتدريب لتعظيم الكفاءة والفعالية.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Digital transformation concept" class="w-full h-full object-cover" src="http://googleusercontent.com/image_collection/image_retrieval/14515497403887957609_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=AI+Training'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 2: مفهوم الدمج -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">مفهوم دمج الذكاء الاصطناعي في التدريب</h2>
+                        <p class="text-sm text-slate-500">تكامل المنظومة التقنية لتمكين وبناء الكفاءات المعرفية والعملية.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500 mb-2">
+                                    <h4 class="font-bold text-sky-900 mb-1">كيف يكون دمج الذكاء الاصطناعي في التدريب؟</h4>
+                                    <p class="text-slate-800 text-sm">هي عملية إدماج أدوات وتقنيات الذكاء الاصطناعي في مختلف جوانب العملية التدريبية، بدءًا من تصميم البرنامج التدريبي وانتهاءً بتقييم أداء المتدرب.</p>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-graduation-cap text-sky-600"></i> تحسين الجودة</h5>
+                                        <p class="text-xs text-slate-600">تحسين جودة التعلم من خلال التدريب، وتمكين المتدرب من اكتساب المهارات والمعارف اللازمة لمواجهة تحديات المستقبل.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-briefcase text-sky-600"></i> تمكين مهني للمستقبل</h5>
+                                        <p class="text-xs text-slate-600">التمكين من اكتساب المهارات والمعارف اللازمة لمواجهة تحديات سوق العمل والمستقبل الرقمي بكفاءة عالية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="AI learning" class="w-full h-full object-cover" src="http://googleusercontent.com/image_collection/image_retrieval/3432775105592108744_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Digital+Learning'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 3: خطوات الدمج - أولاً (تحليل المحتوى) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">خطوات الدمج: أولاً تقييم الوضع الحالي</h2>
+                        <p class="text-sm text-slate-500">المرحلة الأولى: تحليل المحتوى لبدء عملية رقمنة وتدريب رصينة.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="flex items-center gap-3 bg-sky-900 text-white p-3 rounded-lg shadow">
+                                    <span class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center font-bold text-sm">1</span>
+                                    <h4 class="font-bold text-base">تحليل وتقييم المحتوى الحالي</h4>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-2 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-sm">تحديد المجالات القابلة للتحديث:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">مراجعة المحتوى المعرفي والتدريبي لتحديد المجالات التي يمكن دمج الذكاء الاصطناعي فيها.</p>
+                                    </div>
+                                    <div class="border-r-2 border-emerald-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-sm">دراسة الاتجاهات العالمية:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">الاطلاع على تجارب الدول الأخرى التي أدخلت الذكاء الاصطناعي واستفادت منها في هذا الصدد.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Analytics and planning" class="w-full h-full object-cover" src="http://googleusercontent.com/image_collection/image_retrieval/9840513524090594367_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Assessment'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 4: خطوات الدمج - أولاً (تحديد الأهداف) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">خطوات الدمج: أولاً تقييم الوضع الحالي</h2>
+                        <p class="text-sm text-slate-500">المرحلة الثانية: تحديد وصياغة الأهداف الاستراتيجية بدقة.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="flex items-center gap-3 bg-sky-900 text-white p-3 rounded-lg shadow">
+                                    <span class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center font-bold text-sm">2</span>
+                                    <h4 class="font-bold text-base">تحديد وصياغة الأهداف التدريبية</h4>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-bullseye text-red-500"></i> صياغة أهداف واضحة ومقيسة:</h5>
+                                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                                        تحديد ما يجب أن يتحقق من معرفة ومهارات بعد دمج الذكاء الاصطناعي في المنظومة التدريبية.
+                                    </p>
+                                    <div class="bg-slate-50 p-3 rounded border-r-4 border-amber-500">
+                                        <span class="text-xs font-bold text-slate-500 block mb-1">مثال توضيحي تطبيقي:</span>
+                                        <p class="text-xs text-slate-800 italic font-semibold">"أن يكون المتدرب قادراً على استخدام أدوات تحليل البيانات الأساسية بكفاءة عالية."</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Goal setting" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Goals'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 5: خطوات الدمج - ثانياً (إضافة وحدات جديدة) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">خطوات الدمج: ثانياً تطوير المحتوى</h2>
+                        <p class="text-sm text-slate-500">تصميم وتجديد المناهج لتشمل أحدث الاتجاهات الرقمية والوسائط المتعددة.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="flex items-center gap-3 bg-sky-900 text-white p-3 rounded-lg shadow">
+                                    <span class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center font-bold text-sm">3</span>
+                                    <h4 class="font-bold text-base">إضافة وتطوير وحدات تدريبية تكنولوجية</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs"><i class="fa-solid fa-cubes text-sky-600"></i> تصميم وحدات حديثة</h5>
+                                        <p class="text-xs text-slate-600 leading-relaxed">إنشاء وتصميم مصفوفة وحدات تتناول مواضيع أساسية مثل: التعلم الآلي (Machine Learning)، الشبكات العصبية، ومعالجة اللغات الطبيعية (NLP).</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs"><i class="fa-solid fa-photo-film text-sky-600"></i> محتوى متعدد الوسائط</h5>
+                                        <p class="text-xs text-slate-600 leading-relaxed">استخدام الفيديوهات والرسوم المتحركة والمحاكاة لتوضيح وتبسيط المفاهيم المعقدة للمتدربين.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Tech modules design" class="w-full h-full object-cover" src="http://googleusercontent.com/image_collection/image_retrieval/4557132677809330999_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=New+Modules'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 6: خطوات الدمج - ثانياً (تطبيقات عملية) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">خطوات الدمج: ثانياً تطوير المحتوى</h2>
+                        <p class="text-sm text-slate-500">تمكين المعرفة عبر الممارسة الميدانية والمشاريع الواقعية الملموسة.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="flex items-center gap-3 bg-sky-900 text-white p-3 rounded-lg shadow">
+                                    <span class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center font-bold text-sm">4</span>
+                                    <h4 class="font-bold text-base">التطبيقات العملية والمشاريع التطبيقية</h4>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-2 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-sm">مشاريع تطبيقية حية:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">تشجيع المتدرب على إجراء مشاريع صغيرة تستخدم الذكاء الاصطناعي، مثل بناء نموذج بسيط للتعرف على الصور.</p>
+                                    </div>
+                                    <div class="border-r-2 border-emerald-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-sm">أمثلة من قطاعات الحياة الحقيقية:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">تقديم أمثلة عملية على كيفية استخدام الذكاء الاصطناعي في مجالات مثل: التعليم، الرعاية الصحية، النقل، والخدمات المالية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Practical applications" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Projects'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 7: خطوات الدمج - ثالثاً (التدريب وبناء القدرات) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">خطوات الدمج: ثالثاً التدريب وبناء القدرات</h2>
+                        <p class="text-sm text-slate-500">تمكين وتأهيل الكوادر وتأسيس قنوات تفاعلية لتبادل المعارف والخبرات.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="flex items-center gap-3 bg-sky-900 text-white p-3 rounded-lg shadow">
+                                    <span class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center font-bold text-sm">5</span>
+                                    <h4 class="font-bold text-base">التدريب والتمكين وتبادل المعرفة</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs"><i class="fa-solid fa-chalkboard-user text-sky-600"></i> تنظيم ورش تدريبية</h5>
+                                        <p class="text-xs text-slate-600 leading-relaxed">تقديم دورات تدريبية وورش عمل تفاعلية حول كيفية استخدام الذكاء الاصطناعي في التدريب المستدام.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs"><i class="fa-solid fa-share-nodes text-sky-600"></i> تبادل المعرفة</h5>
+                                        <p class="text-xs text-slate-600 leading-relaxed">إنشاء منصة تفاعلية لتبادل الخبرات وتوطين الممارسات الفضلى بين المهتمين والمختصين حول طرق دمج الذكاء الاصطناعي.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Knowledge transfer" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Workshops'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 8: أخلاقيات الذكاء الاصطناعي (مقدمة المحور) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">أخلاقيات الذكاء الاصطناعي: التوجهات والمسؤولية</h2>
+                        <p class="text-sm text-slate-500">المبادئ والقيم التوجيهية لبناء بيئة تدريبية رقمية عادلة ومثمرة.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    <h4 class="font-bold text-sky-900 mb-1 text-base">أخلاقيات الذكاء الاصطناعي ومستقبله:</h4>
+                                    <p class="text-slate-800 text-sm">
+                                        في عالمنا المعاصر، أصبح الذكاء الاصطناعي جزءًا لا يتجزأ من حياتنا اليومية، حيث يُستخدم في مجالات متعددة مثل التعليم، والصحة، والتجارة، والترفيه. ومع تزايد الاعتماد على هذه التقنية، تبرز الحاجة الملحة لمناقشة الأخلاقيات المرتبطة به.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-1.5 text-xs flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-amber-500"></i> وضع إطار أخلاقي مسؤول:</h5>
+                                    <p class="text-xs text-slate-600">تتزايد المخاوف بشأن تأثير الذكاء الاصطناعي على المجتمعات، مما يجعل من الضروري وضع إطار أخلاقي يحدد كيفية استخدام هذه التكنولوجيا بشكل مسؤول. وتتضمن هذه المخاوف قضايا الخصوصية، والتمييز، والمساءلة، وأمن البيانات.</p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="AI Ethics concept" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Ethics'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 9: أخلاقيات (الخصوصية وحماية البيانات) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">أخلاقيات الذكاء الاصطناعي: الخصوصية وحماية البيانات</h2>
+                        <p class="text-sm text-slate-500">حفظ وحماية سرية بيانات ومعلومات المستخدمين داخل البيئات الرقمية.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    <h4 class="font-bold text-sky-900 mb-1 flex items-center gap-2 text-base"><i class="fa-solid fa-shield-halved text-sky-600"></i> حماية المعلومات الشخصية:</h4>
+                                    <p class="text-slate-800 text-sm">
+                                        تُعتبر حماية الخصوصية من أبرز القضايا الأخلاقية المرتبطة بالذكاء الاصطناعي. يتم جمع كميات هائلة من البيانات الشخصية من المستخدمين، مما يثير تساؤلات هامة حول كيفية استخدامها وحق الوصول إليها.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-1.5 text-xs">قواعد تنظيمية وتصميمية:</h5>
+                                    <ul class="list-disc pr-5 text-xs text-slate-600 space-y-1">
+                                        <li>يجب تصميم الأنظمة مع مراعاة حماية المعلومات الشخصية لجميع الأطراف والشركاء.</li>
+                                        <li>ضمان توفر الشفافية المطلقة والدقة التامة في كيفية إدارة وجمع البيانات والجهات المخولة بالوصول إليها.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Data privacy" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Privacy'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 10: أخلاقيات (عدم التمييز والعدالة) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">أخلاقيات الذكاء الاصطناعي: عدم التمييز</h2>
+                        <p class="text-sm text-slate-500">الضمانات الأخلاقية لمنع تحيزات النماذج وحفظ حقوق كافة الفئات بالتساوي.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    <h4 class="font-bold text-sky-900 mb-1 flex items-center gap-2 text-base"><i class="fa-solid fa-scale-unbalanced text-sky-600"></i> مكافحة التحيزات في الخوارزميات:</h4>
+                                    <p class="text-slate-800 text-sm">
+                                        يمكن أن تؤدي الخوارزميات المستخدمة في الذكاء الاصطناعي إلى نتائج متحيزة إذا لم يتم تصميمها بعناية. على سبيل المثال، قد تؤدي بيانات التدريب المعيبة إلى تمييز ضد فئات معينة من الأشخاص.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-1.5 text-xs">منهجية الفحص الدوري والعدالة:</h5>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        من الضروري أن يتم اختبار الأنظمة بصفة دورية ومنتظمة لضمان عدم وجود تحيزات، وأن تكون النتائج علمية وعادلة لجميع المستخدمين على حد سواء دون أي تمييز.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Justice and non-bias" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Fairness'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 11: أخلاقيات (الشفافية والمساءلة) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">أخلاقيات الذكاء الاصطناعي: الشفافية والمساءلة</h2>
+                        <p class="text-sm text-slate-500">وضوح آلية اتخاذ القرارات وحوكمة استخدام التقنيات الذكية.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    <h4 class="font-bold text-sky-900 mb-1 flex items-center gap-2 text-base"><i class="fa-solid fa-eye text-sky-600"></i> بناء الثقة المتبادلة بالشفافية:</h4>
+                                    <p class="text-slate-800 text-sm">
+                                        تعد الشفافية عنصرًا أساسيًا في بناء الثقة بين المستخدمين ومطوري الذكاء الاصطناعي. يجب أن يكون من الممكن فهم كيفية اتخاذ القرارات من قبل الأنظمة المدعومة بالذكاء الاصطناعي بكفاءة ووضوح.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-2">
+                                    <h5 class="font-bold text-slate-900 text-xs">متطلبات تطبيق الحوكمة والمساءلة:</h5>
+                                    <ul class="list-disc pr-5 text-xs text-slate-600 space-y-1">
+                                        <li>توفير معلومات واضحة حول كيفية عمل الخوارزميات، وما هي البيانات المستخدمة في تدريبها.</li>
+                                        <li>تأسيس أطر تنظيمية واضحة وآليات للمساءلة في حالة حدوث أخطاء أو إساءة استخدام للنظام.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Transparency concept" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Transparency'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 12: أخلاقيات (تأثير الذكاء الاصطناعي على العلاقات الإنسانية) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">تأثير الذكاء الاصطناعي على العلاقات الإنسانية</h2>
+                        <p class="text-sm text-slate-500">توجيه التكنولوجيا لدعم وتدعيم التواصل الاجتماعي البشري لا إلغائه.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    <h4 class="font-bold text-sky-900 mb-1 flex items-center gap-2 text-base"><i class="fa-solid fa-users text-sky-600"></i> دور التقنية كمحفز للتواصل الإنساني:</h4>
+                                    <p class="text-slate-800 text-sm">
+                                        يؤثر الذكاء الاصطناعي على كيفية تفاعل الناس مع بعضهم البعض، مما قد يؤثر على العلاقات الإنسانية بشكل مباشر وملموس.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-1.5 text-xs">الأبعاد النفسية والاجتماعية للعملية التدريبية:</h5>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        يجب أن يتم استخدام هذه التكنولوجيا لتعزيز التواصل والتفاعل، وليس لتعويضه. ومن الضروري التفكير بعمق في كيفية تأثير الذكاء الاصطناعي على الديناميات الاجتماعية والنفسية.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Human relationships" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1521791136364-7286d35243dd?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Human+Aspects'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 13: أخلاقيات (الاستدامة) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">أخلاقيات الذكاء الاصطناعي: الاستدامة</h2>
+                        <p class="text-sm text-slate-500">تصميم وتطبيق الأنظمة لحماية موارد البيئة ومساندة مستقبل الأجيال.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    <h4 class="font-bold text-sky-900 mb-1 flex items-center gap-2 text-base"><i class="fa-solid fa-leaf text-sky-600"></i> الاستدامة البيئية والمعرفية:</h4>
+                                    <p class="text-slate-800 text-sm">
+                                        تعتبر الاستدامة أحد الجوانب المهمة لأخلاقيات الذكاء الاصطناعي. يجب أن تكون الأنظمة مصممة بطريقة تضمن عدم الإضرار بالبيئة أو بالمجتمعات وتوفير الموارد.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-1.5 text-xs">الأثر التنموي طويل المدى:</h5>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        يتطلب ذلك التفكير بعمق في التأثيرات طويلة المدى لاستخدام وتوظيف أدوات الذكاء الاصطناعي، وكيف يمكن أن يسهم بفاعلية في تحقيق أهداف التنمية المستدامة المعترف بها دولياً.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Sustainability concept" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Sustainability'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 14: أخلاقيات (الخلاصة والالتزام الأخلاقي) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">الخلاصة والالتزام الأخلاقي والعملي المشترك</h2>
+                        <p class="text-sm text-slate-500">مسؤولية جماعية لبناء بيئة تدريبية رقمية عادلة ومثمرة للجميع.</p>
+                    </div>
+                    <div class="slide-content my-auto overflow-y-auto custom-scrollbar pr-2 max-h-[440px]">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-sm">
+                                <p class="text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    أخلاقيات الذكاء الاصطناعي ليست مجرد اعتبارات ثانوية، بل هي ضرورة ملحة لضمان استخدام هذه التكنولوجيا بشكل مسؤول وآمن ومستدام.
+                                </p>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-1 text-xs">منظومة العمل المشترك:</h5>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        يتعين على جميع المعنيين، من مطورين ومستخدمين وصانعي سياسات، العمل معًا لوضع إطار أخلاقي قوي يسهم في تحقيق الفوائد الكاملة للذكاء الاصطناعي دون المساس بالقيم الإنسانية الأساسية.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 h-[280px] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                <img alt="Collaborative workspace" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?q=80&w=600&auto=format&fit=crop" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Collaboration'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 15: التقييم التفاعلي المطور (3 أسئلة متتالية مع لوحة نتائج متكاملة) -->
+                <div class="slide p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4">
+                        <h2 class="text-2xl font-bold text-slate-800">التقييم التفاعلي المطور: قياس استيعاب المادة</h2>
+                        <p class="text-sm text-slate-500">اختبار تفاعلي لقياس مدى فهم الأهداف المعرفية المضمنة بالحقيبة التدريبية.</p>
+                    </div>
+                    
+                    <div class="slide-content my-auto max-h-[440px] overflow-y-auto custom-scrollbar pr-2">
+                        <!-- واجهة السؤال النشط -->
+                        <div id="quiz-playground" class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full" id="quiz-progress-badge">السؤال 1 من 3</span>
+                                <div class="w-32 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div id="quiz-progress-bar" class="bg-sky-600 h-full w-1/3 transition-all duration-300"></div>
+                                </div>
+                            </div>
+
+                            <div class="quiz-question text-base font-bold text-slate-800 mb-4" id="quiz-question-text">
+                                السؤال الأول: ما هو الهدف الجوهري من دمج الذكاء الاصطناعي في المنظومة التدريبية؟
+                            </div>
+
+                            <div class="quiz-options flex flex-col gap-3" id="quiz-options-container">
+                                <!-- سيتم بناؤها ديناميكياً بجافا سكريبت لتسهيل تعدد الأسئلة وصيانتها -->
+                            </div>
+
+                            <!-- منطقة التغذية الراجعة والتقدم -->
+                            <div class="quiz-feedback mt-4 p-4 rounded-lg hidden text-sm font-semibold flex items-center gap-2" id="quiz-feedback-box"></div>
+                            
+                            <div class="flex justify-end mt-4">
+                                <button id="quiz-action-btn" onclick="nextQuizQuestion()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 hidden shadow transition-all">
+                                    السؤال التالي <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- لوحة النتائج النهائية للمتدرب -->
+                        <div id="quiz-result-screen" class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm text-center hidden flex flex-col items-center justify-center gap-4">
+                            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mb-2">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-800">تهانينا! لقد أكملت التقييم التفاعلي بنجاح</h3>
+                            <p class="text-slate-600 text-sm max-w-md">أداؤك يعكس مدى التزامك بفهم آليات دمج التقنيات وأخلاقيات حوكمتها في العملية التدريبية الأكاديمية.</p>
+                            <div class="bg-slate-50 border border-slate-200 py-3 px-8 rounded-lg my-2">
+                                <span class="text-xs text-slate-400 block font-semibold">درجتك النهائية:</span>
+                                <span class="text-3xl font-extrabold text-sky-600" id="quiz-score-display">0 / 3</span>
+                            </div>
+                            <button onclick="restartQuiz()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 transition-all">
+                                إعادة المحاولة <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-xs text-slate-400 border-t border-slate-200 pt-3 flex justify-between">
+                        <span>أدوات ذكية لتدريب مستدام</span>
+                        <span class="text-emerald-600 font-bold"><i class="fa-solid fa-certificate"></i> تقييم معتمد أكاديمياً</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- شريط التحكم والتنقل السفلي الثابت للحقيبة التدريبية -->
+        <div id="bottom-navbar" class="h-[70px] bg-slate-900 border-t border-slate-800 flex justify-between items-center px-8 z-15">
+            <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="prev-btn" onclick="prevSlide()">
+                <i class="fa-solid fa-arrow-right"></i> السابق
+            </button>
+            <div class="flex items-center gap-3">
+                <button class="bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 p-2 rounded-lg text-xs" title="الصفحة الرئيسية" onclick="goToSlide(0)">
+                    <i class="fa-solid fa-house"></i>
+                </button>
+                <div class="slide-counter text-slate-400 text-xs font-bold tracking-wide" id="slide-counter">الشريحة 1 من 16</div>
+            </div>
+            <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="next-btn" onclick="nextSlide()">
+                التالي <i class="fa-solid fa-arrow-left"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- جافا سكريبت التفاعلية لإدارة حالة العرض والأسئلة والتحكم بالشرائح -->
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const sidebarItems = document.querySelectorAll('.nav-item');
+        const slideCounter = document.getElementById('slide-counter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // خريطة تحديث القائمة الجانبية بالاعتماد على فهرس الشريحة النشطة بدقة لمنع الالتباس
+        const slideToMenuMap = {
+            0: 0,  // البداية
+            1: 1,  // المقدمة
+            2: 2,  // مفهوم الدمج
+            3: 3,  // خطوات الدمج 1
+            4: 4,  // خطوات الدمج 2
+            5: 5,  // خطوات الدمج 3
+            6: 6,  // خطوات الدمج 4
+            7: 7,  // خطوات الدمج 5
+            8: 8,  // أخلاقيات مقدمة
+            9: 9,  // أخلاقيات 1
+            10: 10, // أخلاقيات 2
+            11: 11, // أخلاقيات 3
+            12: 12, // أخلاقيات 4
+            13: 13, // أخلاقيات 5
+            14: 14, // أخلاقيات خلاصة
+            15: 15  // التقييم الذاتي المعرفي
+        };
+
+        function updateSlideUI() {
+            // تحديث إظهار وإخفاء الشرائح
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // تحديث العنصر النشط في القائمة الجانبية
+            sidebarItems.forEach(item => {
+                item.classList.remove('bg-sky-600', 'text-white', 'font-bold');
+                item.classList.add('text-slate-400');
+            });
+
+            const activeMenuItemIndex = slideToMenuMap[currentSlide];
+            if(sidebarItems[activeMenuItemIndex]) {
+                sidebarItems[activeMenuItemIndex].classList.add('bg-sky-600', 'text-white', 'font-bold');
+                sidebarItems[activeMenuItemIndex].classList.remove('text-slate-400');
+            }
+
+            // تحديث شريط الحالة السفلي والأعداد
+            slideCounter.textContent = `الشريحة ${currentSlide + 1} من ${totalSlides}`;
+            
+            // إدارة تعطيل وتمكين أزرار التنقل في النهايات والبدايات
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            // في حال الانتقال إلى شريحة الأسئلة يتم تصفير التقييم للبدء من جديد بنشاط
+            if (currentSlide === 15) {
+                restartQuiz();
+            }
+        }
+
+        function nextSlide() {
+            if(currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlideUI();
+            }
+        }
+
+        function prevSlide() {
+            if(currentSlide > 0) {
+                currentSlide--;
+                updateSlideUI();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlideUI();
+        }
+
+        // هيكل أسئلة التقييم التفاعلي المطور والمنهجي
+        const quizData = [
+            {
+                question: "السؤال الأول: ما الهدف الجوهري والرئيسي من دمج أدوات الذكاء الاصطناعي في التدريب المستدام؟",
+                options: [
+                    { text: "أ) الاستغناء التام والكامل عن الكوادر التدريبية والاعتماد الكلي على الآلة.", isCorrect: false, feedback: "غير صحيح؛ لأن الهدف ليس استبدال العنصر البشري بل تمكينه ودعمه معرفياً." },
+                    { text: "ب) رفع جودة وكفاءة البرامج وتمكين المتدرب من مهارات وجاهزية المستقبل.", isCorrect: true, feedback: "صحيح تماماً! يركز التدريب المستدام على تمكين الفرد لمواجهة متطلبات المستقبل المعرفية والمهنية." },
+                    { text: "ج) تقليص واختصار زمن البرامج التدريبية لأقل حد ممكن دون مراعاة الاستيعاب.", isCorrect: false, feedback: "غير صحيح؛ فالسرعة ليست على حساب الاستدامة والاستيعاب التدريبي." }
+                ]
+            },
+            {
+                question: "السؤال الثاني: كيف يمكن معالجة مخاوف ومبدأ (عدم التمييز والعدالة) في خوارزميات التدريب الذكي؟",
+                options: [
+                    { text: "أ) بالاكتفاء بتركيب البرمجية كما هي دون مراجعة أو تعديل.", isCorrect: false, feedback: "خاطئ؛ قد تحتوي البيانات الافتتاحية على تحيزات مسبقة ممررة للنظام." },
+                    { text: "ب) تصميم الأنظمة وتجريبها واختبار مخرجاتها بانتظام لضمان تكافؤ الفرص.", isCorrect: true, feedback: "رائع ومصيب! المراجعة الدورية واختبار القرارات هما السبيل الأوحد لتحقيق العدالة الرقمية." },
+                    { text: "ج) حظر استخدام الخوارزميات بالكلية وتجنب التقنيات الحديثة.", isCorrect: false, feedback: "غير صحيح؛ تجنب التقنية يعرقل جودة التدريب بدلاً من معالجة أخطائه." }
+                ]
+            },
+            {
+                question: "السؤال الثالث: ما هي المرحلة الفرعية الأنسب في خطوة (تقييم الوضع الحالي) لبدء رقمنة المناهج؟",
+                options: [
+                    { text: "أ) إضافة مشاريع تطبيقية للتعرف الذكي على الصور.", isCorrect: false, feedback: "هذه تتبع مرحلة 'تطوير المحتوى' وليس تقييم الوضع الحالي." },
+                    { text: "ب) تحديد المجالات القابلة للتحديث وتحديد الأهداف وصياغتها بدقة مقيسة.", isCorrect: true, feedback: "إجابة صحيحة وممتازة! تقييم الوضع يبدأ بتحليل المحتوى وصياغة الأهداف بشكل علمي واضح." },
+                    { text: "ج) تبادل المعرفة وبناء منصات تعاونية رقمية للخبراء.", isCorrect: false, feedback: "هذه الخطوة تندرج تحت محور 'التدريب وبناء القدرات'." }
+                ]
+            }
+        ];
+
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+
+        function buildQuizUI() {
+            const currentQ = quizData[quizCurrentIndex];
+            
+            // تحديث شريط التقدم والعدادات
+            document.getElementById('quiz-progress-badge').textContent = `السؤال ${quizCurrentIndex + 1} من ${quizData.length}`;
+            const percentWidth = ((quizCurrentIndex + 1) / quizData.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${percentWidth}%`;
+
+            // تحديث نص السؤال
+            document.getElementById('quiz-question-text').textContent = currentQ.question;
+
+            // بناء الخيارات ديناميكياً
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option-btn w-full text-right p-4 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-medium text-slate-700 transition-all text-xs lg:text-sm flex justify-between items-center";
+                btn.textContent = opt.text;
+                btn.onclick = () => selectQuizOption(btn, opt);
+                optionsContainer.appendChild(btn);
+            });
+
+            // إخفاء التغذية الراجعة والزرار
+            document.getElementById('quiz-feedback-box').className = 'quiz-feedback mt-4 p-4 rounded-lg hidden text-sm font-semibold flex items-center gap-2';
+            document.getElementById('quiz-feedback-box').style.display = 'none';
+            document.getElementById('quiz-action-btn').style.display = 'none';
+        }
+
+        function selectQuizOption(selectedBtn, optionData) {
+            const allOptionButtons = document.querySelectorAll('.quiz-option-btn');
+            
+            // تعطيل الضغط الإضافي لمنع الغش بعد الاختيار
+            allOptionButtons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            
+            if(optionData.isCorrect) {
+                quizScore++;
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-sm font-semibold flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i> <span>${optionData.feedback}</span>`;
+            } else {
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-sm font-semibold flex items-center gap-2 bg-rose-50 text-rose-800 border border-rose-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg"></i> <span>${optionData.feedback}</span>`;
+
+                // تمييز الخيار الصحيح للمتدرب لتوضيحه له علمياً وأكاديمياً
+                allOptionButtons.forEach((btn, index) => {
+                    if(quizData[quizCurrentIndex].options[index].isCorrect) {
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                    }
+                });
+            }
+
+            feedbackBox.style.display = 'flex';
+            
+            // إظهار زر الخطوة التالية
+            const actionBtn = document.getElementById('quiz-action-btn');
+            if (quizCurrentIndex < quizData.length - 1) {
+                actionBtn.innerHTML = `السؤال التالي <i class="fa-solid fa-chevron-left"></i>`;
+            } else {
+                actionBtn.innerHTML = `عرض النتيجة النهائية <i class="fa-solid fa-square-poll-vertical"></i>`;
+            }
+            actionBtn.style.display = 'flex';
+        }
+
+        function nextQuizQuestion() {
+            if (quizCurrentIndex < quizData.length - 1) {
+                quizCurrentIndex++;
+                buildQuizUI();
+            } else {
+                // عرض شاشة النتيجة النهائية بالكامل
+                document.getElementById('quiz-playground').style.display = 'none';
+                document.getElementById('quiz-result-screen').style.display = 'flex';
+                document.getElementById('quiz-score-display').textContent = `${quizScore} / ${quizData.length}`;
+            }
+        }
+
+        function restartQuiz() {
+            quizCurrentIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-playground').style.display = 'block';
+            document.getElementById('quiz-result-screen').style.display = 'none';
+            buildQuizUI();
+        }
+
+        // التشغيل المبدئي للحقيبة التدريبية بأكملها
+        updateSlideUI();
+    </script>
+</body>
+</html>
