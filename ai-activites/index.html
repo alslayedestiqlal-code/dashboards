@@ -1,1 +1,1168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أدوات ذكية لتدريب مستدام - تصميم الأنشطة الذكية</title>
+    <!-- استيراد خطوط Google Fonts وتحديداً خط "التاج وال" المهني والأكاديمي -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                            emerald: '#059669',
+                            slate: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
 
+        body {
+            background-color: #0f172a; /* خلفية داكنة راقية لإبراز لوحة العرض */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+
+        /* حاوية العرض التقديمي الرئيسية المتجاوبة بالكامل لتناسب Teams والإطارات المختلفة */
+        #presentation-wrapper {
+            width: 100%;
+            height: 100vh;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            #presentation-wrapper {
+                height: 90vh;
+                max-height: 850px;
+                min-height: 600px;
+                border-radius: 16px;
+                border: 1px solid #334155;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* تخصيص أشرطة التمرير لضمان ثبات العناصر وتوافقها مع المحتوى الطويل */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* حركات الانتقال السلسة بين الشرائح */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* تحديد مساحة المحتوى القابل للتمرير داخل الشريحة لمنع اقتطاع النصوص */
+        .slide-content-scroll {
+            height: calc(100% - 90px);
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-wrapper" class="max-w-7xl">
+        
+        <!-- شريط علوي للشاشات الصغيرة لعرض القائمة المنزلقة وتسهيل التنقل داخل Teams -->
+        <div class="md:hidden bg-slate-900 text-white h-[60px] flex justify-between items-center px-4 border-b border-slate-800 flex-shrink-0 z-10">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-sky-400 text-lg"></i>
+                <span class="text-xs font-bold">أدوات ذكية لتدريب مستدام</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-slate-100 bg-slate-800 p-2 rounded-lg hover:bg-slate-700 transition-colors" title="عرض القائمة">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- خلفية داكنة لتغطية المحتوى عند فتح القائمة المنزلقة على الهواتف -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 z-20 transition-opacity"></div>
+
+        <!-- الهيكل الداخلي للمحتوى واللوحة الجانبية -->
+        <div id="main-body" class="flex flex-grow h-[calc(100%-130px)] md:h-[calc(100%-70px)] relative overflow-hidden">
+            
+            <!-- لوحة التنقل الجانبية المتجاوبة وتحتوي على جميع العناوين الرئيسية والفرعية -->
+            <div id="sidebar" class="absolute md:relative top-0 right-0 h-full w-[280px] md:w-[300px] bg-slate-900 border-l border-slate-800 flex flex-col p-5 text-slate-100 z-30 flex-shrink-0 transition-transform duration-300 transform translate-x-full md:translate-x-0">
+                <div class="logo-area hidden md:flex items-center gap-3 mb-6 pb-4 border-b border-slate-800 flex-shrink-0">
+                    <i class="fa-solid fa-brain text-sky-400 text-2xl animate-pulse"></i>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-400">البرنامج التدريبي</h3>
+                        <h3 class="text-sm font-bold text-white">أدوات ذكية لتدريب مستدام</h3>
+                    </div>
+                </div>
+                
+                <!-- قائمة المحاور مع تجميع الشرائح وأشرطة التمرير التلقائية لمنع القطع -->
+                <ul class="nav-menu flex flex-col gap-1.5 flex-grow overflow-y-auto custom-scrollbar pr-1 text-sm">
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(0)">
+                        <i class="fa-solid fa-house text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">الرئيسية</span>
+                    </li>
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(1)">
+                        <i class="fa-solid fa-star text-sky-500 w-5 text-center"></i> 
+                        <span>المقدمة والأثر التدريبي</span>
+                    </li>
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(2)">
+                        <i class="fa-solid fa-diagram-project text-sky-500 w-5 text-center"></i> 
+                        <span>خارطة توظيف الأنشطة</span>
+                    </li>
+                    
+                    <!-- قسم خطوات التوظيف المبتكر للأنشطة -->
+                    <div class="text-[11px] text-slate-500 font-bold uppercase mt-2 px-3 tracking-wider flex-shrink-0">خطوات توظيف الأنشطة الذكية</div>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(3)">
+                        <i class="fa-solid fa-bullseye text-sky-500 w-4 text-center"></i> 
+                        <span>1. تحديد الأهداف والمهارات</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(4)">
+                        <i class="fa-solid fa-toolbox text-sky-500 w-4 text-center"></i> 
+                        <span>2. اختيار الأنشطة وتصنيف الأدوات</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(5)">
+                        <i class="fa-solid fa-users text-sky-500 w-4 text-center"></i> 
+                        <span>3. الملاءمة وتقييم الأدوات</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(6)">
+                        <i class="fa-solid fa-map text-sky-500 w-4 text-center"></i> 
+                        <span>4. تصميم خطة التدريب وإدارة الوقت</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(7)">
+                        <i class="fa-solid fa-chart-line text-sky-500 w-4 text-center"></i> 
+                        <span>5. تقييم الأداء والتكييف المستمر</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(8)">
+                        <i class="fa-solid fa-up-right-and-down-left-from-center text-sky-500 w-4 text-center"></i> 
+                        <span>6. توسيع نطاق الأنشطة الذكية</span>
+                    </li>
+
+                    <!-- قسم المرفقات والأدلة المنهجية المضافة حديثاً -->
+                    <div class="text-[11px] text-slate-500 font-bold uppercase mt-2 px-3 tracking-wider flex-shrink-0">المرفقات والنماذج العملية</div>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(9)">
+                        <i class="fa-solid fa-clipboard-check text-sky-500 w-4 text-center"></i> 
+                        <span>مرفق 1: أداة تقييم النشاط الذكي</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(10)">
+                        <i class="fa-solid fa-terminal text-sky-500 w-4 text-center"></i> 
+                        <span>مرفق 2: أوامر الابتكار (جزء 1)</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(11)">
+                        <i class="fa-solid fa-terminal text-sky-500 w-4 text-center"></i> 
+                        <span>مرفق 2: أوامر الابتكار (جزء 2)</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(12)">
+                        <i class="fa-solid fa-lightbulb text-sky-500 w-4 text-center"></i> 
+                        <span>دليل صياغة الموجهات الفعالة</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(13)">
+                        <i class="fa-solid fa-layer-group text-sky-500 w-4 text-center"></i> 
+                        <span>مرفق 3: سيناريو Miro AI التفاعلي</span>
+                    </li>
+
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white mt-2" onclick="goToSlide(14)">
+                        <i class="fa-solid fa-clipboard-question text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">التقييم المعرفي الذاتي</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- منفذ عرض الشرائح التفاعلي المرن والداعم لإيماءات اللمس والسحب -->
+            <div id="slide-viewport" class="flex-grow relative bg-slate-50 overflow-hidden">
+
+                <!-- الشريحة 0: الشريحة الافتتاحية للمحتوى الجديد -->
+                <div class="slide flex flex-col justify-between p-6 md:p-12 bg-slate-900 text-white active">
+                    <div class="flex justify-between items-center flex-shrink-0">
+                        <span class="bg-sky-500/10 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold border border-sky-500/20">
+                            أدوات ذكية لتدريب مستدام
+                        </span>
+                    </div>
+                    <div class="my-auto text-right max-w-4xl overflow-y-auto custom-scrollbar pr-2 py-4">
+                        <span class="text-xs md:text-sm font-bold text-sky-400 uppercase tracking-wider block mb-2">المحور الثالث</span>
+                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
+                            تصميم الأنشطة الذكية <br class="hidden md:inline">
+                            <span class="text-sky-400 bg-clip-text">في التدريب المستدام</span>
+                        </h1>
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed max-w-2xl mb-6">
+                            بناء بيئة تدريبية تفاعلية تمكن المدربين من توظيف أدوات وتقنيات الذكاء الاصطناعي لابتكار أنشطة نوعية تحفز الإبداع والتعاون والتفكير النقدي المستدام لدى المتدربين.
+                        </p>
+                        <div class="flex gap-4">
+                            <button onclick="nextSlide()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-sky-500/20 transition-all text-xs md:text-sm flex items-center gap-2">
+                                ابدأ العرض التفاعلي <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-800 pt-4 flex flex-col md:flex-row justify-between text-[10px] md:text-xs text-slate-500 gap-2 flex-shrink-0">
+                        <span>تصميم الأنشطة الذكية المبتكرة</span>
+                        <span>وزارة التربية والتعليم والمركز الإقليمي لتكنولوجيا المعلومات والاتصال © 2026</span>
+                    </div>
+                </div>
+
+                <!-- الشريحة 1: المقدمة -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">المقدمة</h2>
+                        <p class="text-xs md:text-sm text-slate-500">تمكين وتكامل الأبعاد الذكية في عملية التدريب الفعال.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <p class="text-sm md:text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    تعتبر الأنشطة المعتمدة على الذكاء الاصطناعي أداة قوية للغاية لتعزيز التفكير النقدي والإبداع لدى المتعلمين والمتدربين على حد سواء.
+                                </p>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-brain text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>تحفيز استكشاف المعرفة:</strong> من خلال دمج هذه الأنشطة الذكية بداخل المادة التدريبية، يُفتح المجال أمام المتدرب لاستكشاف المفاهيم بطرق مبتكرة وحية.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-arrow-trend-up text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>تحسين تجربة التدريب بأكملها:</strong> ترقية الأدوات المستعملة يتيح إيجاد مساحات حيوية تحول المتدرب من متلقٍ سلبي إلى مشارك نشط ومستدام العطاء.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-2">
+                                <img alt="AI Essentials Workshop Cover representation" class="w-full h-auto object-cover rounded-lg" src="http://googleusercontent.com/image_collection/image_retrieval/14515497403887957609_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=AI+Essentials+Workshop'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 2: خارطة توظيف الأنشطة -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">خارطة توظيف الأنشطة الذكية</h2>
+                        <p class="text-xs md:text-sm text-slate-500">6 خطوات منهجية متكاملة تضمن ابتكار أنشطة ذات جودة واستدامة تعليمية.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                            <div onclick="goToSlide(3)" class="bg-white hover:bg-sky-50 border border-slate-200 p-3 md:p-4 rounded-xl shadow-sm transition-all cursor-pointer group">
+                                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs mb-2 group-hover:bg-sky-600 group-hover:text-white transition-all">١</div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">تحديد الأهداف والمهارات</h4>
+                                <p class="text-[10px] md:text-xs text-slate-500">تعريف الفجوة والمهارات وصياغة نتائج قابلة للقياس.</p>
+                            </div>
+                            <div onclick="goToSlide(4)" class="bg-white hover:bg-sky-50 border border-slate-200 p-3 md:p-4 rounded-xl shadow-sm transition-all cursor-pointer group">
+                                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs mb-2 group-hover:bg-sky-600 group-hover:text-white transition-all">٢</div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">اختيار الأنشطة والأدوات</h4>
+                                <p class="text-[10px] md:text-xs text-slate-500">تحديد موضوع النشاط واكتشاف أدوات الذكاء الاصطناعي.</p>
+                            </div>
+                            <div onclick="goToSlide(5)" class="bg-white hover:bg-sky-50 border border-slate-200 p-3 md:p-4 rounded-xl shadow-sm transition-all cursor-pointer group">
+                                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs mb-2 group-hover:bg-sky-600 group-hover:text-white transition-all">٣</div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">ملاءمة وتقييم الأدوات</h4>
+                                <p class="text-[10px] md:text-xs text-slate-500">مراعاة الفئة المستهدفة واختبار الأداة قبل التطبيق الفعلي.</p>
+                            </div>
+                            <div onclick="goToSlide(6)" class="bg-white hover:bg-sky-50 border border-slate-200 p-3 md:p-4 rounded-xl shadow-sm transition-all cursor-pointer group">
+                                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs mb-2 group-hover:bg-sky-600 group-hover:text-white transition-all">٤</div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">تصميم خطة التدريب</h4>
+                                <p class="text-[10px] md:text-xs text-slate-500">تنظيم المحتوى والأساليب وتقدير الوقت بدقة ومرونة.</p>
+                            </div>
+                            <div onclick="goToSlide(7)" class="bg-white hover:bg-sky-50 border border-slate-200 p-3 md:p-4 rounded-xl shadow-sm transition-all cursor-pointer group">
+                                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs mb-2 group-hover:bg-sky-600 group-hover:text-white transition-all">٥</div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">تقييم الأداء والتكييف</h4>
+                                <p class="text-[10px] md:text-xs text-slate-500">جمع التغذية الراجعة وتحليل وتحديث الأنشطة دورياً.</p>
+                            </div>
+                            <div onclick="goToSlide(8)" class="bg-white hover:bg-sky-50 border border-slate-200 p-3 md:p-4 rounded-xl shadow-sm transition-all cursor-pointer group">
+                                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs mb-2 group-hover:bg-sky-600 group-hover:text-white transition-all">٦</div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">توسيع النطاق والاستدامة</h4>
+                                <p class="text-[10px] md:text-xs text-slate-500">تطبيق الأنشطة على مواد أخرى لتشجيع التعلم المستمر.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 3: خطوة 1: تحديد الأهداف والمهارات -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">الخطوة الأولى: تحديد الأهداف والمهارات</h2>
+                        <p class="text-xs md:text-sm text-slate-500">اللبنة الأولى لبناء نشاط تدريبي هادف وذكي.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="flex items-center gap-3 bg-slate-900 text-white p-3 rounded-lg shadow-sm">
+                                    <span class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center font-bold text-xs">١</span>
+                                    <h4 class="font-bold text-xs md:text-sm">تأسيس بوصلة التوجيه التعليمي والتدريبي</h4>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-2 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">تحديد المهارات المستهدفة:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">يجب أولاً استهداف وتحديد المهارات التي نسعى لتمكينها وتعزيزها بدقة، مثل: التفكير النقدي، مهارة حل المشكلات، أو مهارات التعاون والعمل الجماعي.</p>
+                                    </div>
+                                    <div class="border-r-2 border-emerald-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">تحديد وصياغة النتائج المتوقعة:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">وضع وصياغة أهداف ذكية واضحة وقابلة للقياس والتقييم للوقوف بدقة على مدى نجاح هذه الأنشطة المبتكرة.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-2">
+                                <img alt="Goal setting representation" class="w-full h-auto object-cover rounded-lg" src="http://googleusercontent.com/image_collection/image_retrieval/9840513524090594367_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Setting+Goals'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 4: خطوة 2: اختيار الأنشطة وتصنيف الأدوات -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">الخطوة الثانية: اختيار الأنشطة واستكشاف الأدوات</h2>
+                        <p class="text-xs md:text-sm text-slate-500">كيفية اختيار الأنشطة وتوظيف الأدوات المناسبة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="flex flex-col gap-4 text-xs md:text-sm">
+                            <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                <h4 class="font-bold text-sky-900 mb-1 text-xs md:text-sm">مفهوم اختيار الأنشطة المناسبة:</h4>
+                                <p class="text-slate-800 text-[11px] md:text-xs">
+                                    يعد اختيار الأنشطة المناسبة حجر الزاوية في تصميم المواد التدريبية المتقدمة عند دمج خوارزميات الذكاء الاصطناعي. يتطلب ذلك تحديداً واضحاً للموضوع التدريبي ثم البحث عن الأداة الداعمة للنشاط.
+                                </p>
+                                <p class="text-slate-600 text-[11px] mt-1 italic"><strong>مثال:</strong> إذا كان الموضوع "التغير المناخي"، نبحث عن أدوات تساعد في تحليل البيانات البيئية وصياغة نماذج تنبؤية للنتائج.</p>
+                            </div>
+                            
+                            <!-- جدول تصنيف بعض أدوات الذكاء الاصطناعي الشائعة للأنشطة -->
+                            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table class="w-full text-right border-collapse bg-white">
+                                    <thead class="bg-slate-900 text-white text-xs">
+                                        <tr>
+                                            <th class="p-2.5 border-b border-slate-200 font-bold">الأداة الذكية</th>
+                                            <th class="p-2.5 border-b border-slate-200 font-bold">الاستخدام والتكامل التدريبي بالأنشطة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-[11px] md:text-xs text-slate-700">
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="p-2.5 border-b border-slate-200 font-bold text-sky-700">ChatGPT / Claude</td>
+                                            <td class="p-2.5 border-b border-slate-200">توليد الأسئلة، السيناريوهات الحوارية، دراسة الحالات الصعبة، وبناء تمارين التفكير النقدي.</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors bg-slate-50/50">
+                                            <td class="p-2.5 border-b border-slate-200 font-bold text-sky-700">Canva AI (Magic Write)</td>
+                                            <td class="p-2.5 border-b border-slate-200">تصميم وتوليد المواد التدريبية، العروض التقديمية المرئية، والمخططات البصرية تلقائياً.</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="p-2.5 border-b border-slate-200 font-bold text-sky-700">Quizizz AI</td>
+                                            <td class="p-2.5 border-b border-slate-200">إعداد الاختبارات القصيرة التفاعلية، استطلاعات الرأي الفورية، والمسابقات الذكية لتقييم الأداء.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <span class="text-[10px] text-slate-400 italic font-semibold">* تنويه: هذه الأدوات مذكورة على سبيل المثال لا الحصر!</span>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 5: تابع خطوة 2: ملاءمة الأنشطة وتقييم الأدوات -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">الخطوة الثانية: الملاءمة وتقييم الأدوات</h2>
+                        <p class="text-xs md:text-sm text-slate-500">ضمان تناسق الأداة التكنولوجية مع قدرات واحتياجات الفئة المستهدفة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs md:text-sm">
+                                        <i class="fa-solid fa-users text-sky-600"></i> ملاءمة الأنشطة للمتدربين
+                                    </h5>
+                                    <p class="text-xs text-slate-600 mb-2">تأكد من أن مستوى التحدي مناسب للمتلقي من خلال تتبع الآتي:</p>
+                                    <ul class="list-disc pr-5 text-xs text-slate-600 space-y-1">
+                                        <li><strong>دراسة الفئة المستهدفة:</strong> مراعاة الخصائص العمرية والنفسية والمهنية للمتدربين لضمان تقبلهم للأداة.</li>
+                                        <li><strong>اختبار وتجربة النشاط:</strong> القيام بتنفيذ تجربة صغيرة مسبقة مع عينة محدودة لتلقي التغذية الراجعة السريعة قبل العرض الشامل.</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs md:text-sm">
+                                        <i class="fa-solid fa-sliders text-sky-600"></i> معايير فنية هامة لتقييم الأداة
+                                    </h5>
+                                    <ul class="list-disc pr-5 text-xs text-slate-600 space-y-1">
+                                        <li><strong>الميزات الفنية:</strong> سهولة الاستخدام، موثوقية الأداة ودعمها التام للغة العربية.</li>
+                                        <li><strong>الدعم التدريبي:</strong> توفر مصادر تدريبية توضيحية للأداة ومجتمعات دعم مستمرة للمتعلمين.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-2">
+                                <img alt="Evaluating tech tools" class="w-full h-auto object-cover rounded-lg" src="http://googleusercontent.com/image_collection/image_retrieval/3432775105592108744_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Evaluating+AI+Tools'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 6: خطوة 3: تصميم خطة التدريب وإدارة الوقت -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">الخطوة الثالثة: تصميم الخطة وإدارة الوقت</h2>
+                        <p class="text-xs md:text-sm text-slate-500">تخطيط مسار النشاط الزمني لضمان التفاعل المتزن والكامل.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs md:text-sm">
+                                        <i class="fa-solid fa-clock text-amber-600"></i> معايير ضبط وإدارة زمن النشاط الذكي
+                                    </h5>
+                                    <div class="space-y-3">
+                                        <div class="border-r-2 border-amber-500 pr-3">
+                                            <h6 class="font-semibold text-slate-800 text-[11px] md:text-xs">تقدير الوقت لكل نشاط:</h6>
+                                            <p class="text-[10px] text-slate-600">تخصيص مدة زمنية محددة بدقة لكل مرحلة (تهيئة، عصف ذهني، عمل جماعي، تقييم وعرض ومناقشة).</p>
+                                        </div>
+                                        <div class="border-r-2 border-amber-500 pr-3">
+                                            <h6 class="font-semibold text-slate-800 text-[11px] md:text-xs">المرونة في التصميم:</h6>
+                                            <p class="text-[10px] text-slate-600">توقع حدوث بعض التأخيرات الفنية أو الصعوبات عند تشغيل الأداة الرقمية، والاستعداد ببدائل تدريبية مرنة.</p>
+                                        </div>
+                                        <div class="border-r-2 border-amber-500 pr-3">
+                                            <h6 class="font-semibold text-slate-800 text-[11px] md:text-xs">التوازن العام للنشاط:</h6>
+                                            <p class="text-[10px] text-slate-600">الموازنة المثالية بين الشرح النظري الموجه من المدرب، والتطبيق العملي المستغرق بواسطة المتدربين.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-sky-50 p-3 rounded-lg border-r-4 border-sky-500 flex items-center gap-3">
+                                    <i class="fa-solid fa-shuffle text-sky-600 text-lg flex-shrink-0"></i>
+                                    <div>
+                                        <h5 class="font-bold text-sky-950 text-xs md:text-sm">آليات التنويع والدمج المنهجي</h5>
+                                        <p class="text-[10px] text-sky-800">تنويع أساليب عرض المادة ودمج الأنشطة الرقمية والتطبيقات الواقعية لكسر رتابة اللقاء التدريبي.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 text-center">
+                                <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa-solid fa-clock text-amber-600 text-4xl animate-pulse"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">تنظيم وإدارة الوقت</h4>
+                                <p class="text-[10px] text-slate-500">تنظيم المحتوى والأساليب يضمن تحقيق أقصى استفادة تدريبية من الزمن المحدد.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 7: خطوة 4 و5: تقييم الأداء، التكييف والتحسين -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">الخطوة الرابعة والخامسة: التقييم والتعديل</h2>
+                        <p class="text-xs md:text-sm text-slate-500">حلقات التغذية الراجعة المستمرة تضمن جودة وأصالة ممارسات التدريب.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2 text-emerald-600">
+                                        <i class="fa-solid fa-chart-line text-lg"></i>
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">الخطوة الرابعة: تقييم الأداء</h5>
+                                    </div>
+                                    <ul class="space-y-2 text-[11px] md:text-xs text-slate-600">
+                                        <li class="flex items-start gap-2">
+                                            <i class="fa-regular fa-circle-check text-emerald-500 mt-1 flex-shrink-0"></i>
+                                            <span><strong>جمع التغذية الراجعة:</strong> استخدام نماذج تقييم متنوعة لمعرفة مرئيات المتدربين حول الأنشطة.</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i class="fa-regular fa-circle-check text-emerald-500 mt-1 flex-shrink-0"></i>
+                                            <span><strong>تقييم النتائج:</strong> تحليل مخرجات التدريب لقياس ما إذا كانت الأنشطة حققت المهارات المستهدفة أم تحتاج لمسارات تدعيمية.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2 text-sky-600">
+                                        <i class="fa-solid fa-gears text-lg"></i>
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">الخطوة الخامسة: التكييف والتحسين</h5>
+                                    </div>
+                                    <ul class="space-y-2 text-[11px] md:text-xs text-slate-600">
+                                        <li class="flex items-start gap-2">
+                                            <i class="fa-regular fa-circle-check text-sky-500 mt-1 flex-shrink-0"></i>
+                                            <span><strong>تعديل وتحوير الأنشطة:</strong> معالجة الصعوبات المكتشفة وتعديل خطوات التنفيذ بناءً على نتائج التغذية الراجعة.</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i class="fa-regular fa-circle-check text-sky-500 mt-1 flex-shrink-0"></i>
+                                            <span><strong>التحديث الدوري للمحتوى:</strong> مراجعة الأدوات الرقمية المستخدمة دورياً لمواكبة تحديثاتها المتسارعة بالذكاء الاصطناعي.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 8: خطوة 6: توسيع النطاق والتنمية المستدامة -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">الخطوة السادسة: توسيع النطاق والاستدامة</h2>
+                        <p class="text-xs md:text-sm text-slate-500">نقل وتوطين الممارسات وتوسيع رقعة الأنشطة لتشمل مجالات تدريبية أخرى.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    <h4 class="font-bold text-sky-900 mb-1 text-xs md:text-sm">تعزيز مفهوم الاستدامة المعرفية:</h4>
+                                    <p class="text-slate-800 text-[11px] md:text-xs">
+                                        الاستدامة في التدريب تعني استقرار المهارة وتمددها لتشمل سياقات متعددة. هذا يتطلب تحويل الأنشطة المبتكرة من مجرد تجارب فردية ومتقطعة لتدخل بنظام الحوكمة والتعلم المنهجي المستمر.
+                                    </p>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 text-xs mb-1">تطبيق الأنشطة بمواد أخرى</h5>
+                                        <p class="text-[10px] text-slate-600">التفكير العميق في آليات توطين هذا النشاط وتطبيقه على مواد دراسية أو برامج تدريبية متنوعة ومتباينة.</p>
+                                    </div>
+                                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm">
+                                        <h5 class="font-bold text-slate-900 text-xs mb-1">ترسيخ التعلم الذاتي المستمر</h5>
+                                        <p class="text-[10px] text-slate-600">تمكين وتدريب المشاركين على استخدام أدوات الذكاء الاصطناعي بشكل منفرد ومستقل لضمان دوام مهاراتهم الرقمية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-2 text-center">
+                                <div class="w-20 h-20 bg-sky-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa-solid fa-up-right-and-down-left-from-center text-sky-600 text-4xl"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">توسيع الأثر التعليمي</h4>
+                                <p class="text-[10px] text-slate-500">تحسين الاستيعاب عبر دمج الذكاء الاصطناعي في مجالات تدريبية جديدة على نطاق واسع.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 9: المرفق 1: أداة تقييم النشاط المصمم بالذكاء الاصطناعي -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">مرفق ١: كيف أقيم النشاط المصمم بالذكاء الاصطناعي</h2>
+                        <p class="text-xs md:text-sm text-slate-500">أداة تفتيش وتقييم منهجي مخصصة لتمكين المدربين قبل تطبيق الأنشطة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-xs">
+                            <p class="text-[11px] text-slate-500 mb-3 bg-slate-50 p-2.5 rounded-lg border-r-4 border-slate-500">
+                                <strong>التعليمات للمدربين:</strong> قم بقراءة سيناريو ومخرجات النشاط التدريبي الذي أنشأته باستخدام أدوات التوليد الذكية، ثم أجب على الأسئلة التالية بوضوح لضمان الأصالة والجودة العالية.
+                            </p>
+                            
+                            <!-- جدول تقييم تفاعلي مبتكر للتحقق والتقييم من قبل المتدرب -->
+                            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table class="w-full text-right border-collapse">
+                                    <thead class="bg-slate-900 text-white text-[10px] md:text-xs">
+                                        <tr>
+                                            <th class="p-2 border-b border-slate-200">معيار السؤال المنهجي</th>
+                                            <th class="p-2 border-b border-slate-200 text-center w-[200px]">التحقق</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-[10px] md:text-xs text-slate-700">
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-2 border-b border-slate-100">١. هل النشاط ملائم ومناسب تماماً للفئة المستهدفة؟</td>
+                                            <td class="p-2 border-b border-slate-100 text-center">
+                                                <select class="p-1 rounded border border-slate-300 text-[10px] bg-slate-50 focus:bg-white focus:outline-none">
+                                                    <option>اختر التقييم...</option>
+                                                    <option>نعم</option>
+                                                    <option>لا</option>
+                                                    <option>إلى حد ما</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-2 border-b border-slate-100">٢. هل يحقق هذا النشاط هدفاً تدريبياً واضحاً وقابلاً للقياس؟</td>
+                                            <td class="p-2 border-b border-slate-100 text-center">
+                                                <select class="p-1 rounded border border-slate-300 text-[10px] bg-slate-50 focus:bg-white focus:outline-none">
+                                                    <option>اختر التقييم...</option>
+                                                    <option>نعم</option>
+                                                    <option>لا</option>
+                                                    <option>إلى حد ما</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-2 border-b border-slate-100">٣. هل يحتوي النشاط على خطوات واضحة وقابلة للتنفيذ الميداني؟</td>
+                                            <td class="p-2 border-b border-slate-100 text-center">
+                                                <select class="p-1 rounded border border-slate-300 text-[10px] bg-slate-50 focus:bg-white focus:outline-none">
+                                                    <option>اختر التقييم...</option>
+                                                    <option>نعم</option>
+                                                    <option>لا</option>
+                                                    <option>إلى حد ما</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-2 border-b border-slate-100">٤. هل يتضمن النشاط تفاعلاً حقيقياً (عمل جماعي، نقاش، تطبيق)?</td>
+                                            <td class="p-2 border-b border-slate-100 text-center">
+                                                <select class="p-1 rounded border border-slate-300 text-[10px] bg-slate-50 focus:bg-white focus:outline-none">
+                                                    <option>اختر التقييم...</option>
+                                                    <option>نعم</option>
+                                                    <option>لا</option>
+                                                    <option>إلى حد ما</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-2 border-b border-slate-100">٥. هل المحتوى أصيل وغير مستهلك أو مكرر من أنشطة تقليدية؟</td>
+                                            <td class="p-2 border-b border-slate-100 text-center">
+                                                <select class="p-1 rounded border border-slate-300 text-[10px] bg-slate-50 focus:bg-white focus:outline-none">
+                                                    <option>اختر التقييم...</option>
+                                                    <option>نعم</option>
+                                                    <option>لا</option>
+                                                    <option>إلى حد ما</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 10: المرفق 2: أوامر لابتكار أنشطة تدريبية باستخدام الذكاء الاصطناعي (جزء 1) -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">مرفق ٢: أوامر ذكية لابتكار أنشطة تدريبية (جزء ١)</h2>
+                        <p class="text-xs md:text-sm text-slate-500">نماذج موجهات (Prompts) جاهزة يمكن نسخها واستخدامها مع ChatGPT أو Claude.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <span class="bg-sky-100 text-sky-800 font-bold px-2 py-1 rounded text-[10px] block w-fit mb-2">المجال: توليد نشاط تفاعلي حواري</span>
+                                    <h5 class="font-bold text-slate-900 mb-2">أمر مهارة الاستماع النشط</h5>
+                                    <p class="text-slate-600 italic bg-slate-50 p-2.5 rounded border border-slate-200 leading-relaxed text-[11px]">
+                                        "اقترح نشاطًا تدريبيًا تفاعليًا لتعليم مهارة الاستماع النشط لموظفين جدد في بيئة عمل مكتبية. اجعل النشاط قصير المدة (15 دقيقة)، مع تحديد تعليمات واضحة، دور للمدرب، ودور للمتدربين، وطريقة لقياس التفاعل."
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <span class="bg-sky-100 text-sky-800 font-bold px-2 py-1 rounded text-[10px] block w-fit mb-2">المجال: تحفيز التفكير النقدي</span>
+                                    <h5 class="font-bold text-slate-900 mb-2">أمر تحليل المواقف التعليمية</h5>
+                                    <p class="text-slate-600 italic bg-slate-50 p-2.5 rounded border border-slate-200 leading-relaxed text-[11px]">
+                                        "صمّم نشاطاً تدريبيًا يحفّز التفكير النقدي لدى معلمي المرحلة الإعدادية. اجعل النشاط قائمًا على تحليل موقف تعليمي قصير، ثم صياغة أسئلة نقدية يطرحها المتدربون بأنفسهم. وضّح خطوات ومدة التنفيذ بالتفصيل."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 11: المرفق 2: أوامر لابتكار أنشطة تدريبية باستخدام الذكاء الاصطناعي (جزء 2) -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">مرفق ٢: أوامر ذكية لابتكار أنشطة تدريبية (جزء ٢)</h2>
+                        <p class="text-xs md:text-sm text-slate-500">موجهات لتوليد حالات دراسية وسيناريوهات للمواقف التدريبية الصعبة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <span class="bg-indigo-100 text-indigo-800 font-bold px-1.5 py-0.5 rounded text-[10px] block w-fit mb-2">حالة دراسية قصيرة</span>
+                                    <p class="text-slate-600 italic bg-slate-50 p-2 rounded text-[10px] leading-relaxed">
+                                        "اكتب لي حالة دراسية من فقرتين لشرح مفهوم التغذية الراجعة البناءة بين مدرب ومتدرب. اجعلها واقعية، توضّح تحديًا حقيقيًا واجهه المدرب، ثم اطرح في النهاية سؤالين للنقاش الجماعي حول كيفية تحسين أسلوب المدرب."
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <span class="bg-indigo-100 text-indigo-800 font-bold px-1.5 py-0.5 rounded text-[10px] block w-fit mb-2">نشاط جماعي تطبيقي</span>
+                                    <p class="text-slate-600 italic bg-slate-50 p-2 rounded text-[10px] leading-relaxed">
+                                        "أعطني فكرة نشاط جماعي حول مهارة إدارة الوقت لطلبة جامعيين. يتضمن تقسيم المشاركين لمجموعات صغيرة، تحديًا عمليًا (مثل تنظيم جدول مهمة)، آلية لعرض ومناقشة النتائج، مع تحديد الزمن الكلي."
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <span class="bg-indigo-100 text-indigo-800 font-bold px-1.5 py-0.5 rounded text-[10px] block w-fit mb-2">موقف تدريبي صعب</span>
+                                    <p class="text-slate-600 italic bg-slate-50 p-2 rounded text-[10px] leading-relaxed">
+                                        "ولّد سيناريو لموقف تدريبي يتضمن تحديًا في قيادة فريق عمل متنوع. صِف الحوار بين المدرب وأحد المشاركين (المعارض أو المتردد)، ثم اقترح 3 طرق عملية لإدارة الموقف والحفاظ على التفاعل."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 12: دليل ونصائح لكتابة الموجهات الفعالة للمدربين -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">دليل صياغة الموجهات الفعالة للمدربين</h2>
+                        <p class="text-xs md:text-sm text-slate-500">نصائح وإرشادات عملية للحصول على أدق وأفضل المخرجات التدريبية.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-3 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <ul class="space-y-2.5">
+                                    <li class="flex items-start gap-2.5 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-pen-fancy text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>تعديل صياغة الموجه دائماً:</strong> خصّص دائماً أسلوب الموجه ولغته ليتناسب طردياً مع الفئة المستهدفة ومجال تخصصهم بدقة.</span>
+                                    </li>
+                                    <li class="flex items-start gap-2.5 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-filter text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>إضافة القيود الدقيقة:</strong> حدّد دائماً شروطاً مثل: المدة الزمنية المخصصة للنشاط، والنمط التدريسي، وعدد المتدربين داخل المجموعات.</span>
+                                    </li>
+                                    <li class="flex items-start gap-2.5 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-wand-magic-sparkles text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>استخدام صيغ وأسلوب التبسيط:</strong> أضف للموجه عبارات مساعدة كـ "باستخدام أسلوب بسيط"، "مع ضرب أمثلة من واقع الميدان"، أو "تحديد أداة رقمية للتوظيف".</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4">
+                                <div class="bg-indigo-50 border-r-4 border-indigo-500 p-4 rounded-lg">
+                                    <h4 class="font-bold text-indigo-900 mb-1 text-xs md:text-sm">القيمة المضافة للمدرب:</h4>
+                                    <p class="text-[11px] text-indigo-800 leading-relaxed">
+                                        تمكّن هذه الموجهات المدربين من امتلاك "قائمة موجهات مرجعية تفاعلية" يمكن استدعاؤها سريعاً لتصميم أنشطة رصينة وواضحة وقابلة للتخصيص الفوري.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 13: المرفق 3: نموذج نشاط تدريبي ذكي باستخدام Miro AI -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">مرفق ٣: نموذج تفاعلي لتطبيق الأنشطة (Miro AI)</h2>
+                        <p class="text-xs md:text-sm text-slate-500">سيناريو تطبيقي عملي متكامل يدمج التكنولوجيا والإبداع الرقمي.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-xs space-y-4">
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-lg border-r-4 border-emerald-500">
+                                <div>
+                                    <span class="text-[10px] text-slate-500 block">عنوان النشاط:</span>
+                                    <span class="font-bold text-slate-800">خارطة الأنشطة الذكية</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 block">الهدف التدريبي:</span>
+                                    <span class="font-bold text-slate-800">تصميم نشاط تفاعلي تعاوني عبر Miro AI</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 block">الزمن الكلي:</span>
+                                    <span class="font-bold text-slate-800">٤٠ دقيقة</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 block">المتطلبات الأساسية:</span>
+                                    <span class="font-bold text-slate-800">حساب على منصة Miro</span>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-slate-200 pt-3">
+                                <h4 class="font-bold text-slate-800 mb-2">خطوات التنفيذ والسيناريو العملي:</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] text-slate-600">
+                                    <div class="space-y-1.5">
+                                        <p><strong>١. التهيئة (٥ دق):</strong> يشرح المدرب الفكرة ويوضح مفهوم "النشاط التدريبي الذكي".</p>
+                                        <p><strong>٢. تشكيل المجموعات (٥ دق):</strong> تقسيم المشاركين لمجموعات فرعية من ٣-٤ أفراد.</p>
+                                        <p><strong>٣. العصف الذهني (١٠ دق):</strong> تستخدم المجموعات أداة Miro AI لاقتراح أفكار أنشطة بناء على موضوع محدد (مثل إدارة الوقت).</p>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <p><strong>٤. تصميم النشاط (١٠ دق):</strong> تنظيم الأفكار على لوحة Miro البصرية وتحويلها لسيناريو تنفيذي (الهدف، المدة، والآلية).</p>
+                                        <p><strong>٥. العرض والتغذية الراجعة (١٠ دق):</strong> تعرض كل مجموعة مخططها التدريبي وتستقبل الآراء للتطوير.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-50 text-emerald-900 border border-emerald-200 p-3 rounded-lg text-[11px]">
+                                <h5 class="font-bold mb-1"><i class="fa-solid fa-trophy"></i> معايير النجاح والتقييم:</h5>
+                                <p>وضوح الأهداف المحددة • توظيف أداة ذكاء اصطناعي بشكل عملي حقيقي • تقديم لوحة تخطيطية مرئية جذابة • التفاعل والتعاون التام داخل المجموعة.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 14: التقييم التفاعلي المطور (3 أسئلة متتالية مع لوحة نتائج متكاملة) -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">التقييم التفاعلي: قياس استيعاب المادة</h2>
+                        <p class="text-xs md:text-sm text-slate-500">اختبار لقياس فهم وإدراك آليات تصميم الأنشطة الذكية وتوظيف أدواتها.</p>
+                    </div>
+                    
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <!-- واجهة السؤال النشط -->
+                        <div id="quiz-playground" class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full animate-pulse" id="quiz-progress-badge">السؤال 1 من 3</span>
+                                <div class="w-24 md:w-32 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div id="quiz-progress-bar" class="bg-sky-600 h-full w-1/3 transition-all duration-300"></div>
+                                </div>
+                            </div>
+
+                            <div class="quiz-question text-xs md:text-sm lg:text-base font-bold text-slate-800 mb-4" id="quiz-question-text">
+                                السؤال الأول: ما هي الخطوة الأولى والأساسية لتأسيس نشاط تدريبي مبتكر مدعوم بالذكاء الاصطناعي؟
+                            </div>
+
+                            <div class="quiz-options flex flex-col gap-3" id="quiz-options-container">
+                                <!-- سيتم بناؤها ديناميكياً بجافا سكريبت لتسهيل تعدد الأسئلة وصيانتها -->
+                            </div>
+
+                            <!-- منطقة التغذية الراجعة والتقدم -->
+                            <div class="quiz-feedback mt-4 p-4 rounded-lg hidden text-xs md:text-sm font-semibold flex items-center gap-2" id="quiz-feedback-box"></div>
+                            
+                            <div class="flex justify-end mt-4">
+                                <button id="quiz-action-btn" onclick="nextQuizQuestion()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 hidden shadow transition-all">
+                                    السؤال التالي <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- لوحة النتائج النهائية للمتدرب -->
+                        <div id="quiz-result-screen" class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm text-center hidden flex flex-col items-center justify-center gap-4">
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl md:text-3xl mb-2">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-slate-800">تهانينا! لقد أكملت تقييم المحور بنجاح</h3>
+                            <p class="text-slate-600 text-xs md:text-sm max-w-md">أداؤك يعكس مدى تمكنك من آليات تصميم وإعداد الأنشطة التدريبية الذكية لتوظيفها بنجاح في الميدان.</p>
+                            <div class="bg-slate-50 border border-slate-200 py-3 px-8 rounded-lg my-2">
+                                <span class="text-[10px] text-slate-400 block font-semibold">درجتك النهائية:</span>
+                                <span class="text-2xl md:text-3xl font-extrabold text-sky-600" id="quiz-score-display">0 / 3</span>
+                            </div>
+                            <button onclick="restartQuiz()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 transition-all">
+                                إعادة المحاولة <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex justify-between flex-shrink-0">
+                        <span>أدوات ذكية لتدريب مستدام</span>
+                        <span class="text-emerald-600 font-bold"><i class="fa-solid fa-certificate"></i> تقييم معتمد أكاديمياً للمدربين</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- شريط التحكم والتنقل السفلي الثابت للحقيبة التدريبية -->
+        <div id="bottom-navbar" class="h-[70px] bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4 md:px-8 z-15 flex-shrink-0">
+            <!-- زر الرئيسية مصمم بشكل واضح ومتجاوب في الجهة اليمنى (بجوار عداد الشرائح) -->
+            <div class="flex items-center gap-3">
+                <button class="bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all shadow" title="الصفحة الرئيسية" onclick="goToSlide(0)">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="hidden sm:inline">الرئيسية</span>
+                </button>
+                <div class="slide-counter text-slate-400 text-[11px] md:text-xs font-bold tracking-wide" id="slide-counter">الشريحة 1 من 15</div>
+            </div>
+            
+            <!-- أزرار التنقل (التالي والسابق) مجمعة بجانب بعضها مباشرة لسهولة التنقل -->
+            <div class="flex items-center gap-2">
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="prev-btn" onclick="prevSlide()">
+                    <i class="fa-solid fa-arrow-right"></i> <span>السابق</span>
+                </button>
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="next-btn" onclick="nextSlide()">
+                    <span>التالي</span> <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- جافا سكريبت التفاعلية لإدارة حالة العرض والأسئلة والتحكم بالشرائح -->
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const sidebarItems = document.querySelectorAll('.nav-item');
+        const slideCounter = document.getElementById('slide-counter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        let sidebarOpen = false;
+
+        // إدارة فتح وإغلاق لوحة التنقل الجانبية على الهواتف والأجهزة اللوحية المدمجة
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebarOpen) {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+                sidebarOpen = false;
+            } else {
+                sidebar.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                sidebarOpen = true;
+            }
+        }
+
+        // خريطة تحديث القائمة الجانبية بالاعتماد على فهرس الشريحة النشطة بدقة لمنع الالتباس
+        const slideToMenuMap = {
+            0: 0,   // البداية
+            1: 1,   // المقدمة والأثر التدريبي
+            2: 2,   // خارطة توظيف الأنشطة
+            3: 3,   // تحديد الأهداف والمهارات
+            4: 4,   // اختيار الأنشطة وتصنيف الأدوات
+            5: 5,   // الملاءمة وتقييم الأدوات
+            6: 6,   // تصميم خطة التدريب وإدارة الوقت
+            7: 7,   // تقييم الأداء والتكييف المستمر
+            8: 8,   // توسيع نطاق الأنشطة الذكية
+            9: 9,   // مرفق 1: أداة تقييم النشاط الذكي
+            10: 10, // مرفق 2: أوامر الابتكار (جزء 1)
+            11: 11, // مرفق 2: أوامر الابتكار (جزء 2)
+            12: 12, // دليل صياغة الموجهات الفعالة
+            13: 13, // مرفق 3: سيناريو Miro AI التفاعلي
+            14: 14  // التقييم المعرفي الذاتي
+        };
+
+        function updateSlideUI() {
+            // تحديث إظهار وإخفاء الشرائح
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                    // إعادة ضبط موضع التمرير في محتوى الشريحة لأعلى
+                    const scrollContainer = slide.querySelector('.slide-content-scroll');
+                    if (scrollContainer) scrollContainer.scrollTop = 0;
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // تحديث العنصر النشط في القائمة الجانبية
+            sidebarItems.forEach(item => {
+                item.classList.remove('bg-sky-600', 'text-white', 'font-bold');
+                item.classList.add('text-slate-400');
+            });
+
+            const activeMenuItemIndex = slideToMenuMap[currentSlide];
+            if(sidebarItems[activeMenuItemIndex]) {
+                sidebarItems[activeMenuItemIndex].classList.add('bg-sky-600', 'text-white', 'font-bold');
+                sidebarItems[activeMenuItemIndex].classList.remove('text-slate-400');
+            }
+
+            // تحديث شريط الحالة السفلي والأعداد
+            slideCounter.textContent = `الشريحة ${currentSlide + 1} من ${totalSlides}`;
+            
+            // إدارة تعطيل وتمكين أزرار التنقل في النهايات والبدايات
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            // في حال الانتقال إلى شريحة الأسئلة يتم تصفير التقييم للبدء من جديد بنشاط
+            if (currentSlide === 14) {
+                restartQuiz();
+            }
+        }
+
+        function nextSlide() {
+            if(currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlideUI();
+            }
+        }
+
+        function prevSlide() {
+            if(currentSlide > 0) {
+                currentSlide--;
+                updateSlideUI();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlideUI();
+            // إغلاق تلقائي للقائمة المنزلقة عند اختيار شريحة في الهواتف
+            if (sidebarOpen) {
+                toggleSidebar();
+            }
+        }
+
+        // دعم السحب باللمس للأجهزة الذكية (Swipe Gestures)
+        let touchstartX = 0;
+        let touchendX = 0;
+        const gestureZone = document.getElementById('slide-viewport');
+
+        gestureZone.addEventListener('touchstart', function(event) {
+            touchstartX = event.changedTouches[0].screenX;
+        }, false);
+
+        gestureZone.addEventListener('touchend', function(event) {
+            touchendX = event.changedTouches[0].screenX;
+            handleGesture();
+        }, false);
+
+        function handleGesture() {
+            // وبما أن الاتجاه RTL (من اليمين لليسار)
+            if (touchendX < touchstartX - 50) {
+                nextSlide(); // سحب لليسار يذهب للشريحة التالية
+            }
+            if (touchendX > touchstartX + 50) {
+                prevSlide(); // سحب لليمين يذهب للشريحة السابقة
+            }
+        }
+
+        // دعم مفاتيح الأسهم للوحة المفاتيح
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                nextSlide();
+            } else if (event.key === 'ArrowRight') {
+                prevSlide();
+            }
+        });
+
+        // هيكل أسئلة التقييم التفاعلي المطور والمنهجي
+        const quizData = [
+            {
+                question: "السؤال الأول: ما هي الخطوة الأولى والأساسية لتأسيس نشاط تدريبي مبتكر مدعوم بالذكاء الاصطناعي؟",
+                options: [
+                    { text: "أ) تحديد مهارات المستهدفين ووضع وصياغة نتائج ملموسة قابلة للقياس والتقييم.", isCorrect: true, feedback: "صحيح تماماً! تحديد الأهداف والمهارات هو الأساس المتين لمنهجية توظيف الأنشطة الذكية." },
+                    { text: "ب) اختيار وتجريب أداة Miro AI مباشرة لتوليد مخطط بصري متطور.", isCorrect: false, feedback: "غير صحيح؛ لأن تصميم الأنشطة بالمنظومة التدريبية يبدأ بالأهداف وليس بالأدوات." },
+                    { text: "ج) الاستقرار على موضوع تدريبي وحظر استخدام أي أدوات توليدية أخرى.", isCorrect: false, feedback: "غير صحيح； فالهدف هو تمكين وتوظيف هذه الأدوات بمرونة وليس حظرها." }
+                ]
+            },
+            {
+                question: "السؤال الثاني: عند إعطاء موجه (Prompt) للذكاء الاصطناعي لابتكار سيناريو أو حالة تدريبية، ما الذي يجعله أكثر دقة؟",
+                options: [
+                    { text: "أ) جعل صياغة الموجه قصيرة للغاية وعامة دون أي قيود لتسهيل العمل.", isCorrect: false, feedback: "خاطئ؛ قلة البيانات تؤدي لنتائج عامة غير دقيقة وغير مخصصة للمدرب." },
+                    { text: "ب) إضافة قيود واضحة للسيناريو مثل المدة الزمنية المستهدفة ومستوى المتدربين وأمثلة واقعية.", isCorrect: true, feedback: "رائع ومصيب! صياغة القيود والأمثلة والبيئة التدريبية يولد مخرجات بالغة الدقة وقابلة للتطبيق الفعلي." },
+                    { text: "ج) الاكتفاء بطلب توليد أسئلة وإجابات فقط دون تفاعل حقيقي للمجموعات.", isCorrect: false, feedback: "غير صحيح؛ فالسيناريو التفاعلي الفعال يتطلب وضوح أدوار المدرب والمتدربين معاً." }
+                ]
+            },
+            {
+                question: "السؤال الثالث: كيف يمكن قياس نجاح وملاءمة النشاط التدريبي الذكي المصمم بواسطة أداة مثل Miro AI؟",
+                options: [
+                    { text: "أ) بزيادة المدة الزمنية المخصصة للشرح النظري الموجه من المدرب فقط.", isCorrect: false, feedback: "غير صحيح؛ فالنشاط التفاعلي الناجح يحتاج لتوازن بين دور المدرب ودور المتدربين." },
+                    { text: "ب) بالتركيز الكلي على مظهر اللوحة الرسومية دون الاهتمام بأهداف التدريب.", isCorrect: false, feedback: "غير صحيح؛ فالنشاط التكنولوجي يجب أن يخدم هدفاً تدريبياً أولاً وليس مجرد مظهر بصري." },
+                    { text: "ج) بوضوح الأهداف، ودمج الأدوات الذكية بشكل عملي حقيقي، وتقديم مخطط جذاب مع تعاون المجموعات.", isCorrect: true, feedback: "إجابة صحيحة وممتازة! هذه هي معايير النجاح الأربعة المعتمدة لتقييم الأنشطة الذكية بفاعلية." }
+                ]
+            }
+        ];
+
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+
+        function buildQuizUI() {
+            const currentQ = quizData[quizCurrentIndex];
+            
+            // تحديث شريط التقدم والعدادات
+            document.getElementById('quiz-progress-badge').textContent = `السؤال ${quizCurrentIndex + 1} من ${quizData.length}`;
+            const percentWidth = ((quizCurrentIndex + 1) / quizData.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${percentWidth}%`;
+
+            // تحديث نص السؤال
+            document.getElementById('quiz-question-text').textContent = currentQ.question;
+
+            // بناء الخيارات ديناميكياً
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option-btn w-full text-right p-3.5 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-medium text-slate-700 transition-all text-xs lg:text-sm flex justify-between items-center";
+                btn.textContent = opt.text;
+                btn.onclick = () => selectQuizOption(btn, opt);
+                optionsContainer.appendChild(btn);
+            });
+
+            // إخفاء التغذية الراجعة والزرار
+            document.getElementById('quiz-feedback-box').className = 'quiz-feedback mt-4 p-4 rounded-lg hidden text-sm font-semibold flex items-center gap-2';
+            document.getElementById('quiz-feedback-box').style.display = 'none';
+            document.getElementById('quiz-action-btn').style.display = 'none';
+        }
+
+        function selectQuizOption(selectedBtn, optionData) {
+            const allOptionButtons = document.querySelectorAll('.quiz-option-btn');
+            
+            // تعطيل الضغط الإضافي لمنع الاختيار المتكرر
+            allOptionButtons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            
+            if(optionData.isCorrect) {
+                quizScore++;
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-base md:text-lg"></i> <span>${optionData.feedback}</span>`;
+            } else {
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 bg-rose-50 text-rose-800 border border-rose-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-base md:text-lg"></i> <span>${optionData.feedback}</span>`;
+
+                // تمييز الخيار الصحيح للمتدرب لتوضيحه له علمياً وأكاديمياً
+                allOptionButtons.forEach((btn, index) => {
+                    if(quizData[quizCurrentIndex].options[index].isCorrect) {
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                    }
+                });
+            }
+
+            feedbackBox.style.display = 'flex';
+            
+            // إظهار زر الخطوة التالية
+            const actionBtn = document.getElementById('quiz-action-btn');
+            if (quizCurrentIndex < quizData.length - 1) {
+                actionBtn.innerHTML = `السؤال التالي <i class="fa-solid fa-chevron-left"></i>`;
+            } else {
+                actionBtn.innerHTML = `عرض النتيجة النهائية <i class="fa-solid fa-square-poll-vertical"></i>`;
+            }
+            actionBtn.style.display = 'flex';
+        }
+
+        function nextQuizQuestion() {
+            if (quizCurrentIndex < quizData.length - 1) {
+                quizCurrentIndex++;
+                buildQuizUI();
+            } else {
+                // عرض شاشة النتيجة النهائية بالكامل
+                document.getElementById('quiz-playground').style.display = 'none';
+                document.getElementById('quiz-result-screen').style.display = 'flex';
+                document.getElementById('quiz-score-display').textContent = `${quizScore} / ${quizData.length}`;
+            }
+        }
+
+        function restartQuiz() {
+            quizCurrentIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-playground').style.display = 'block';
+            document.getElementById('quiz-result-screen').style.display = 'none';
+            buildQuizUI();
+        }
+
+        // التشغيل المبدئي للحقيبة التدريبية بأكملها
+        window.onload = function() {
+            updateSlideUI();
+        }
+    </script>
+</body>
+</html>
