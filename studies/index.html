@@ -1,1 +1,728 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أدوات ذكية لتدريب مستدام - تأثير الذكاء الاصطناعي على التعليم والتعلم</title>
+    <!-- استيراد خطوط Google Fonts وتحديداً خط "التاج وال" المهني والأكاديمي -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                            emerald: '#059669',
+                            slate: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
 
+        body {
+            background-color: #0f172a; /* خلفية داكنة راقية لإبراز لوحة العرض */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+
+        /* حاوية العرض التقديمي الرئيسية المتجاوبة بالكامل لتناسب Teams والإطارات المختلفة */
+        #presentation-wrapper {
+            width: 100%;
+            height: 100vh;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            #presentation-wrapper {
+                height: 90vh;
+                max-height: 850px;
+                min-height: 600px;
+                border-radius: 16px;
+                border: 1px solid #334155;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* تخصيص أشرطة التمرير لضمان ثبات العناصر وتوافقها مع المحتوى الطويل */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* حركات الانتقال السلسة بين الشرائح */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* تحديد مساحة المحتوى القابل للتمرير داخل الشريحة لمنع اقتطاع النصوص */
+        .slide-content-scroll {
+            height: calc(100% - 90px);
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-wrapper" class="max-w-7xl">
+        
+        <div class="md:hidden bg-slate-900 text-white h-[60px] flex justify-between items-center px-4 border-b border-slate-800 flex-shrink-0 z-10">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-sky-400 text-lg"></i>
+                <span class="text-xs font-bold">أدوات ذكية لتدريب مستدام</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-slate-100 bg-slate-800 p-2 rounded-lg hover:bg-slate-700 transition-colors" title="عرض القائمة">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- خلفية داكنة لتغطية المحتوى عند فتح القائمة المنزلقة على الهواتف -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 z-20 transition-opacity"></div>
+
+        <!-- الهيكل الداخلي للمحتوى واللوحة الجانبية -->
+        <div id="main-body" class="flex flex-grow h-[calc(100%-130px)] md:h-[calc(100%-70px)] relative overflow-hidden">
+            
+            <div id="sidebar" class="absolute md:relative top-0 right-0 h-full w-[280px] md:w-[300px] bg-slate-900 border-l border-slate-800 flex flex-col p-5 text-slate-100 z-30 flex-shrink-0 transition-transform duration-300 transform translate-x-full md:translate-x-0">
+                <div class="logo-area hidden md:flex items-center gap-3 mb-6 pb-4 border-b border-slate-800 flex-shrink-0">
+                    <i class="fa-solid fa-brain text-sky-400 text-2xl animate-pulse"></i>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-400">البرنامج التدريبي</h3>
+                        <h3 class="text-sm font-bold text-white">أدوات ذكية لتدريب مستدام</h3>
+                    </div>
+                </div>
+                
+                <!-- قائمة المحاور مع تجميع الشرائح وأشرطة التمرير التلقائية لمنع القطع -->
+                <ul class="nav-menu flex flex-col gap-1.5 flex-grow overflow-y-auto custom-scrollbar pr-1 text-sm">
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(0)">
+                        <i class="fa-solid fa-house text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">الرئيسية</span>
+                    </li>
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(1)">
+                        <i class="fa-solid fa-star text-sky-500 w-5 text-center"></i> 
+                        <span>المقدمة والأثر التدريبي</span>
+                    </li>
+                    
+                    <!-- قسم خطوات التوظيف المبتكر للأنشطة -->
+                    <div class="text-[11px] text-slate-500 font-bold uppercase mt-2 px-3 tracking-wider flex-shrink-0">استعراض الأبحاث والدراسات</div>
+                    
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(2)">
+                        <i class="fa-solid fa-building-columns text-sky-500 w-4 text-center"></i> 
+                        <span>1. دراسة جامعة ستانفورد 2019</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(3)">
+                        <i class="fa-solid fa-graduation-cap text-sky-500 w-4 text-center"></i> 
+                        <span>2. دراسة جامعة هارفارد 2020</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(4)">
+                        <i class="fa-solid fa-microchip text-sky-500 w-4 text-center"></i> 
+                        <span>3. دراسة معهد MIT 2021</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(5)">
+                        <i class="fa-solid fa-chart-column text-sky-500 w-4 text-center"></i> 
+                        <span>مقارنة وتلخيص الأثر المعرفي</span>
+                    </li>
+
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white mt-4" onclick="goToSlide(6)">
+                        <i class="fa-solid fa-clipboard-question text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">التقييم المعرفي الذاتي</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- منفذ عرض الشرائح التفاعلي المرن والداعم لإيماءات اللمس والسحب -->
+            <div id="slide-viewport" class="flex-grow relative bg-slate-50 overflow-hidden">
+
+                <div class="slide flex flex-col justify-between p-6 md:p-12 bg-slate-900 text-white active">
+                    <div class="flex justify-between items-center flex-shrink-0">
+                        <span class="bg-sky-500/10 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold border border-sky-500/20">
+                            أدوات ذكية لتدريب مستدام
+                        </span>
+                    </div>
+                    <div class="my-auto text-right max-w-4xl overflow-y-auto custom-scrollbar pr-2 py-4">
+                        <span class="text-xs md:text-sm font-bold text-sky-400 uppercase tracking-wider block mb-2">المحور التعليمي والتكنولوجي</span>
+                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
+                            تأثير أدوات الذكاء الاصطناعي <br class="hidden md:inline">
+                            <span class="text-sky-400 bg-clip-text">على التعليم والتعلم</span>
+                        </h1>
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed max-w-2xl mb-6">
+                            استكشاف رصين وممنهج لأحدث الأبحاث والدراسات العالمية التي تقيس بدقة أثر دمج الخوارزميات والذكاء الاصطناعي على مخرجات التعلم وجودة العمليات التدريبية المعاصرة.
+                        </p>
+                        <div class="flex gap-4">
+                            <button onclick="nextSlide()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-sky-500/20 transition-all text-xs md:text-sm flex items-center gap-2">
+                                ابدأ العرض التفاعلي <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-800 pt-4 flex flex-col md:flex-row justify-between text-[10px] md:text-xs text-slate-500 gap-2 flex-shrink-0">
+                        <span>أدوات ذكية لتدريب مستدام</span>
+                        <span>مخرجات الأبحاث العالمية والدراسات الموثقة © 2026</span>
+                    </div>
+                </div>
+
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">المقدمة والأثر التدريبي</h2>
+                        <p class="text-xs md:text-sm text-slate-500">منهجية دمج التقنيات الحديثة في بيئات التعلم الرقمية المستدامة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <p class="text-sm md:text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    شهدت السنوات الأخيرة اهتمامًا متزايدًا ومتسارعاً بتطبيقات الذكاء الاصطناعي في مجالات التعليم والتعلم والتنمية المهنية المستدامة.
+                                </p>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-brain text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>مواكبة طفرة التقنيات:</strong> يعزز دمج الذكاء الاصطناعي من فرص ابتكار أساليب تواكب الثورة الصناعية الرابعة وتسهم مباشرة في تفعيل بيئات تعلم مرنة وتفاعلية.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-chart-line text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>قياس أثر حقيقي:</strong> توضح الأبحاث العلمية الموثقة من كبرى المؤسسات الأكاديمية العالمية أن تأثير هذه التقنيات ينعكس إيجاباً وبقوة على مخرجات التعلم الفردية والجماعية.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-2">
+                                <img alt="AI in Education and Learning" class="w-full h-auto object-cover rounded-lg" src="http://googleusercontent.com/image_collection/image_retrieval/14515497403887957609_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=AI+in+Education'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">دراسة جامعة ستانفورد (2019)</h2>
+                        <p class="text-xs md:text-sm text-slate-500">مستقبل الذكاء الاصطناعي وتخصيص التعليم الفردي.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">عنوان الدراسة والورقة العلمية:</h5>
+                                        <p class="text-xs text-slate-800 italic mt-1 font-semibold">"The Future of AI in Education" (Stanford University Report)</p>
+                                    </div>
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">المنهجية ومحاور البحث:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">ركزت الدراسة على قياس فعالية دمج خوارزميات التخصيص التلقائي داخل المناهج ومحركات التعلم الفردي الذاتي.</p>
+                                    </div>
+                                    <div class="border-r-4 border-emerald-600 pr-3 bg-emerald-50/50 p-2 rounded">
+                                        <h5 class="font-bold text-emerald-950 text-xs md:text-sm">النتائج الرئيسية ومخرجات الأداء:</h5>
+                                        <p class="text-xs text-emerald-900 mt-1 font-medium">أثبتت الدراسة بشكل جلي وقاطع أن استخدام أدوات الذكاء الاصطناعي في تخصيص التعليم يحسن أداء المتعلمين والمشاركين بنسب قياسية **تصل إلى 30%** مقارنة بالطرق الموحدة والتقليدية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 text-center">
+                                <div class="w-24 h-24 bg-sky-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-sky-100">
+                                    <span class="text-3xl font-extrabold text-sky-600">+30%</span>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-xs md:text-sm mb-1">نسبة تحسن الأداء</h4>
+                                <p class="text-[10px] text-slate-500">وفقاً لمخرجات دراسة جامعة ستانفورد لتخصيص محتوى التدريب.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">دراسة جامعة هارفارد (2020)</h2>
+                        <p class="text-xs md:text-sm text-slate-500">تحليل الأداء المدروس وتقديم الاستجابات والتقييم الفوري للمتدربين.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">عنوان الدراسة والبحث:</h5>
+                                        <p class="text-xs text-slate-800 italic mt-1 font-semibold">"AI and Education: How Artificial Intelligence Can Improve Learning" (Harvard Education Report)</p>
+                                    </div>
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">المنهجية وتوظيف المعلمين:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">بحثت الدراسة دور الأنظمة الذكية كأداة مساعدة رئيسية للمعلم والمشرف في جمع وتتبع مهارات ومواطن الضعف لدى الطلاب والعمل على سد الثغرات الميدانية.</p>
+                                    </div>
+                                    <div class="border-r-4 border-emerald-600 pr-3 bg-emerald-50/50 p-2 rounded">
+                                        <h5 class="font-bold text-emerald-950 text-xs md:text-sm">أبرز المخرجات التدريبية والتربوية:</h5>
+                                        <p class="text-xs text-emerald-900 mt-1 font-medium">أكدت الدراسة أن الاستعانة بهذه الأدوات تتيح للمعلمين تحليل مسارات وسير أداء المتعلم وتقديم **ملاحظات وتقييم فوري** للمتلقين، مما يرفع من جودة واستجابة وفاعلية التدريب بمستويات قياسية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-2">
+                                <img alt="Harvard Study Representation" class="w-full h-auto object-cover rounded-lg animate-pulse" src="http://googleusercontent.com/image_collection/image_retrieval/3432775105592108744_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=Harvard+AI+Report'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">دراسة معهد MIT (2021)</h2>
+                        <p class="text-xs md:text-sm text-slate-500">تقنيات التعلم التكيفي ودورها في تعزيز الاستدامة والاحتفاظ المعرفي.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">عنوان الدراسة والمجلة العلمية:</h5>
+                                        <p class="text-xs text-slate-800 italic mt-1 font-semibold">"Adaptive Learning Technologies and Their Impact on Student Success" (MIT Research)</p>
+                                    </div>
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">المنهجية الفنية:</h5>
+                                        <p class="text-xs text-slate-600 mt-1">تتبعت الدراسة مجموعات الطلاب الذين يتفاعلون مع منصات تعلم ذكية تكيفية تقوم بإعادة تشكيل المادة العلمية ومستويات التحدي بناءً على تقدم الطالب خطوة بخطوة.</p>
+                                    </div>
+                                    <div class="border-r-4 border-emerald-600 pr-3 bg-emerald-50/50 p-2 rounded">
+                                        <h5 class="font-bold text-emerald-950 text-xs md:text-sm">النتيجة المعرفية الكلية:</h5>
+                                        <p class="text-xs text-emerald-900 mt-1 font-medium">أثبتت النتائج نجاح التعلم التكيفي المدعوم كلياً بالذكاء الاصطناعي في **تحسين نتائج الاختبارات المباشرة** وزيادة مستويات **الاحتفاظ طويل المدى بالمعلومات المستدامة** لدى الطلاب.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-2">
+                                <img alt="MIT Adaptive AI Learning Study representation" class="w-full h-auto object-cover rounded-lg" src="http://googleusercontent.com/image_collection/image_retrieval/4557132677809330999_0" onerror="this.src='https://placehold.co/500x300/1e293b/fff?text=MIT+Adaptive+AI+Study'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">مقارنة وتلخيص الأثر المعرفي</h2>
+                        <p class="text-xs md:text-sm text-slate-500">نظرة سريعة ملخصة للدراسات الموثقة التي تم تناولها في العرض التدريبي.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="flex flex-col gap-4 text-xs md:text-sm">
+                            <div class="bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                <h4 class="font-bold text-sky-900 mb-1 text-xs md:text-sm">الغاية التدريبية من استعراض الدراسات:</h4>
+                                <p class="text-slate-800 text-[11px] md:text-xs">
+                                    تأسيس مرجعية علمية للمدربين تدعم استخدام هذه الأدوات الرقمية بثقة تامة أمام المستفيدين من التدريب لضمان الأصالة والاستدامة والفاعلية العلمية المبنية على أدلة رصينة.
+                                </p>
+                            </div>
+                            
+                            <!-- جدول المقارنة المطور -->
+                            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table class="w-full text-right border-collapse bg-white">
+                                    <thead class="bg-slate-900 text-white text-xs">
+                                        <tr>
+                                            <th class="p-3 border-b border-slate-200 font-bold">الجهة المصدرة</th>
+                                            <th class="p-3 border-b border-slate-200 font-bold">العنوان العلمي للدراسة</th>
+                                            <th class="p-3 border-b border-slate-200 font-bold">محور التركيز والنتائج الفعالة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-[11px] md:text-xs text-slate-700">
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="p-3 border-b border-slate-200 font-bold text-sky-700">Stanford University (2019)</td>
+                                            <td class="p-3 border-b border-slate-200 italic">"The Future of AI in Education"</td>
+                                            <td class="p-3 border-b border-slate-200">تخصيص مسارات التعلم للمستفيدين ورفع مستويات التحصيل بنسبة تصل إلى **30%** بوضوح.</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors bg-slate-50/50">
+                                            <td class="p-3 border-b border-slate-200 font-bold text-sky-700">Harvard University (2020)</td>
+                                            <td class="p-3 border-b border-slate-200 italic">"AI and Education"</td>
+                                            <td class="p-3 border-b border-slate-200">مساندة الهيئات التعليمية في تحليل الأداء والمهارات وصياغة **ملاحظات تقييمية فورية** دقيقة.</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="p-3 border-b border-slate-200 font-bold text-sky-700">MIT (2021)</td>
+                                            <td class="p-3 border-b border-slate-200 italic">"Adaptive Learning Technologies"</td>
+                                            <td class="p-3 border-b border-slate-200">أنظمة التعلم التكيفي ودورها الحاسم في **تطوير درجات الاختبارات والاستبقاء المعرفي**.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">التقييم المعرفي الذاتي</h2>
+                        <p class="text-xs md:text-sm text-slate-500">اختبار تفاعلي لقياس استيعاب المدربين لأهم مخرجات أبحاث تأثير الذكاء الاصطناعي.</p>
+                    </div>
+                    
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <!-- واجهة السؤال النشط -->
+                        <div id="quiz-playground" class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full animate-pulse" id="quiz-progress-badge">السؤال 1 من 3</span>
+                                <div class="w-24 md:w-32 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div id="quiz-progress-bar" class="bg-sky-600 h-full w-1/3 transition-all duration-300"></div>
+                                </div>
+                            </div>
+
+                            <div class="quiz-question text-xs md:text-sm lg:text-base font-bold text-slate-800 mb-4" id="quiz-question-text">
+                                السؤال الأول: وفقاً لدراسة جامعة ستانفورد (2019)، ما النسبة التي يمكن تحسين الأداء إليها عبر استخدام أدوات التخصيص التلقائي بالذكاء الاصطناعي؟
+                            </div>
+
+                            <div class="quiz-options flex flex-col gap-3" id="quiz-options-container">
+                                <!-- سيتم بناؤها ديناميكياً بجافا سكريبت لتسهيل تعدد الأسئلة وصيانتها -->
+                            </div>
+
+                            <!-- منطقة التغذية الراجعة والتقدم -->
+                            <div class="quiz-feedback mt-4 p-4 rounded-lg hidden text-xs md:text-sm font-semibold flex items-center gap-2" id="quiz-feedback-box"></div>
+                            
+                            <div class="flex justify-end mt-4">
+                                <button id="quiz-action-btn" onclick="nextQuizQuestion()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 hidden shadow transition-all">
+                                    السؤال التالي <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- لوحة النتائج النهائية للمتدرب -->
+                        <div id="quiz-result-screen" class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm text-center hidden flex flex-col items-center justify-center gap-4">
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl md:text-3xl mb-2">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-slate-800">تهانينا! لقد أكملت تقييم المحور بنجاح</h3>
+                            <p class="text-slate-600 text-xs md:text-sm max-w-md">أداؤك يعكس مدى تمكنك وعلمك بمرتكزات ودراسات أثر الذكاء الاصطناعي على مخرجات وعمليات التعليم الحديثة.</p>
+                            <div class="bg-slate-50 border border-slate-200 py-3 px-8 rounded-lg my-2">
+                                <span class="text-[10px] text-slate-400 block font-semibold">درجتك النهائية:</span>
+                                <span class="text-2xl md:text-3xl font-extrabold text-sky-600" id="quiz-score-display">0 / 3</span>
+                            </div>
+                            <button onclick="restartQuiz()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 transition-all">
+                                إعادة المحاولة <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex justify-between flex-shrink-0">
+                        <span>أدوات ذكية لتدريب مستدام</span>
+                        <span class="text-emerald-600 font-bold"><i class="fa-solid fa-certificate"></i> تقييم معتمد أكاديمياً للمدربين</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="bottom-navbar" class="h-[70px] bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4 md:px-8 z-15 flex-shrink-0">
+            <!-- زر الرئيسية مصمم بشكل واضح ومتجاوب في الجهة اليمنى (بجوار عداد الشرائح) -->
+            <div class="flex items-center gap-3">
+                <button class="bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all shadow" title="الصفحة الرئيسية" onclick="goToSlide(0)">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="hidden sm:inline">الرئيسية</span>
+                </button>
+                <div class="slide-counter text-slate-400 text-[11px] md:text-xs font-bold tracking-wide" id="slide-counter">الشريحة 1 من 7</div>
+            </div>
+            
+            <!-- أزرار التنقل (التالي والسابق) مجمعة بجانب بعضها مباشرة لسهولة التنقل -->
+            <div class="flex items-center gap-2">
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="prev-btn" onclick="prevSlide()">
+                    <i class="fa-solid fa-arrow-right"></i> <span>السابق</span>
+                </button>
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="next-btn" onclick="nextSlide()">
+                    <span>التالي</span> <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const sidebarItems = document.querySelectorAll('.nav-item');
+        const slideCounter = document.getElementById('slide-counter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        let sidebarOpen = false;
+
+        // إدارة فتح وإغلاق لوحة التنقل الجانبية على الهواتف والأجهزة اللوحية المدمجة
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebarOpen) {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+                sidebarOpen = false;
+            } else {
+                sidebar.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                sidebarOpen = true;
+            }
+        }
+
+        // خريطة تحديث القائمة الجانبية بالاعتماد على فهرس الشريحة النشطة بدقة لمنع الالتباس
+        const slideToMenuMap = {
+            0: 0,   // البداية
+            1: 1,   // المقدمة والأثر التدريبي
+            2: 2,   // دراسة جامعة ستانفورد
+            3: 3,   // دراسة جامعة هارفارد
+            4: 4,   // دراسة معهد MIT
+            5: 5,   // مقارنة وتلخيص الأثر المعرفي
+            6: 6    // التقييم المعرفي الذاتي
+        };
+
+        function updateSlideUI() {
+            // تحديث إظهار وإخفاء الشرائح
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                    // إعادة ضبط موضع التمرير في محتوى الشريحة لأعلى
+                    const scrollContainer = slide.querySelector('.slide-content-scroll');
+                    if (scrollContainer) scrollContainer.scrollTop = 0;
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // تحديث العنصر النشط في القائمة الجانبية
+            sidebarItems.forEach(item => {
+                item.classList.remove('bg-sky-600', 'text-white', 'font-bold');
+                item.classList.add('text-slate-400');
+            });
+
+            const activeMenuItemIndex = slideToMenuMap[currentSlide];
+            if(sidebarItems[activeMenuItemIndex]) {
+                sidebarItems[activeMenuItemIndex].classList.add('bg-sky-600', 'text-white', 'font-bold');
+                sidebarItems[activeMenuItemIndex].classList.remove('text-slate-400');
+            }
+
+            // تحديث شريط الحالة السفلي والأعداد
+            slideCounter.textContent = `الشريحة ${currentSlide + 1} من ${totalSlides}`;
+            
+            // إدارة تعطيل وتمكين أزرار التنقل في النهايات والبدايات
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            // في حال الانتقال إلى شريحة الأسئلة يتم تصفير التقييم للبدء من جديد بنشاط
+            if (currentSlide === 6) {
+                restartQuiz();
+            }
+        }
+
+        function nextSlide() {
+            if(currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlideUI();
+            }
+        }
+
+        function prevSlide() {
+            if(currentSlide > 0) {
+                currentSlide--;
+                updateSlideUI();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlideUI();
+            // إغلاق تلقائي للقائمة المنزلقة عند اختيار شريحة في الهواتف
+            if (sidebarOpen) {
+                toggleSidebar();
+            }
+        }
+
+        // دعم السحب باللمس للأجهزة الذكية (Swipe Gestures)
+        let touchstartX = 0;
+        let touchendX = 0;
+        const gestureZone = document.getElementById('slide-viewport');
+
+        gestureZone.addEventListener('touchstart', function(event) {
+            touchstartX = event.changedTouches[0].screenX;
+        }, false);
+
+        gestureZone.addEventListener('touchend', function(event) {
+            touchendX = event.changedTouches[0].screenX;
+            handleGesture();
+        }, false);
+
+        function handleGesture() {
+            // وبما أن الاتجاه RTL (من اليمين لليسار)
+            if (touchendX < touchstartX - 50) {
+                nextSlide(); // سحب لليسار يذهب للشريحة التالية
+            }
+            if (touchendX > touchstartX + 50) {
+                prevSlide(); // سحب لليمين يذهب للشريحة السابقة
+            }
+        }
+
+        // دعم مفاتيح الأسهم للوحة المفاتيح
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                nextSlide();
+            } else if (event.key === 'ArrowRight') {
+                prevSlide();
+            }
+        });
+
+        const quizData = [
+            {
+                question: "السؤال الأول: دراسة جامعة ستانفورد (2019) ركزت على تحسين الأداء من خلال التخصيص بنسبة قياسية تصل إلى كم؟",
+                options: [
+                    { text: "أ) تحسينات في الأداء تصل إلى 15% فقط.", isCorrect: false, feedback: "خاطئ؛ أثبتت دراسة جامعة ستانفورد مخرجات أقوى ونسباً ملموسة أعلى." },
+                    { text: "ب) تحسينات في الأداء ومخرجات التعلم تصل إلى 30%.", isCorrect: true, feedback: "صحيح ورائع! نعم، أشارت نتائج الدراسة لإمكانية تحقيق تحسينات قياسية تصل إلى 30%." },
+                    { text: "ج) تحسينات متواضعة لا تتخطى 5%.", isCorrect: false, feedback: "غير صحيح؛ ميزات التخصيص والتعلم الفردي تعزز النتائج بشكل غير مسبوق." }
+                ]
+            },
+            {
+                question: "السؤال الثاني: ما الميزة والوظيفة الجوهرية للذكاء الاصطناعي التي أكدت عليها وأبرزتها دراسة جامعة هارفارد (2020)؟",
+                options: [
+                    { text: "أ) مساعدة المعلمين في رصد وتحليل أداء المتعلم وتقديم ملاحظات واستجابات فورية.", isCorrect: true, feedback: "إجابة ممتازة ومصيبة! التقييم والتحليل المباشر والملاحظات الفورية هي سر تفوق أدوات هارفارد." },
+                    { text: "ب) استبدال المعلمين بالكلية والاعتماد على قنوات التدريس التلقائية.", isCorrect: false, feedback: "غير صحيح؛ تؤكد الأوراق العلمية على دعم المعلم وليس إلغاء دوره الميداني." },
+                    { text: "ج) اختصار محتوى التدريب من خلال حجب الأفكار والموضوعات المعقدة.", isCorrect: false, feedback: "خاطئ؛ فالأدوات الرقمية تنظم المحتوى وتبسطه بدلاً من حجبه أو إلغائه." }
+                ]
+            },
+            {
+                question: "السؤال الثالث: وفقاً لدراسة معهد ماساتشوستس للتكنولوجيا (MIT)، كيف يؤثر التعلم التكيفي على الطلاب؟",
+                options: [
+                    { text: "أ) يؤدي إلى تراجع طفيف في مستويات الفهم والتحصيل المعرفي العام.", isCorrect: false, feedback: "خاطئ؛ التعلم التكيفي يتوافق تماماً مع قدرات المتلقي ويرتقي بها." },
+                    { text: "ب) يزيد من العبء الميداني وضياع الوقت دون تحقيق تحسن حقيقي.", isCorrect: false, feedback: "غير صحيح؛ فالمنظومة ترشد زمن الحصص التدريبية والتعليمية بكفاءة." },
+                    { text: "ج) يطور بشكل ملموس من نتائج الاختبارات المباشرة ويزيد من الاحتفاظ طويل المدى بالمعلومات المستدامة.", isCorrect: true, feedback: "إجابة صحيحة ومثالية! هذا ما خلصت إليه أوراق معهد MIT بدراسة تكنولوجيا التعلم التكيفي." }
+                ]
+            }
+        ];
+
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+
+        function buildQuizUI() {
+            const currentQ = quizData[quizCurrentIndex];
+            
+            // تحديث شريط التقدم والعدادات
+            document.getElementById('quiz-progress-badge').textContent = `السؤال ${quizCurrentIndex + 1} من ${quizData.length}`;
+            const percentWidth = ((quizCurrentIndex + 1) / quizData.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${percentWidth}%`;
+
+            // تحديث نص السؤال
+            document.getElementById('quiz-question-text').textContent = currentQ.question;
+
+            // بناء الخيارات ديناميكياً
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option-btn w-full text-right p-3.5 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-medium text-slate-700 transition-all text-xs lg:text-sm flex justify-between items-center";
+                btn.textContent = opt.text;
+                btn.onclick = () => selectQuizOption(btn, opt);
+                optionsContainer.appendChild(btn);
+            });
+
+            // إخفاء التغذية الراجعة والزرار
+            document.getElementById('quiz-feedback-box').className = 'quiz-feedback mt-4 p-4 rounded-lg hidden text-sm font-semibold flex items-center gap-2';
+            document.getElementById('quiz-feedback-box').style.display = 'none';
+            document.getElementById('quiz-action-btn').style.display = 'none';
+        }
+
+        function selectQuizOption(selectedBtn, optionData) {
+            const allOptionButtons = document.querySelectorAll('.quiz-option-btn');
+            
+            // تعطيل الضغط الإضافي لمنع الاختيار المتكرر
+            allOptionButtons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            
+            if(optionData.isCorrect) {
+                quizScore++;
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-base md:text-lg"></i> <span>${optionData.feedback}</span>`;
+            } else {
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 bg-rose-50 text-rose-800 border border-rose-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-base md:text-lg"></i> <span>${optionData.feedback}</span>`;
+
+                // تمييز الخيار الصحيح للمتدرب لتوضيحه له علمياً وأكاديمياً
+                allOptionButtons.forEach((btn, index) => {
+                    if(quizData[quizCurrentIndex].options[index].isCorrect) {
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                    }
+                });
+            }
+
+            feedbackBox.style.display = 'flex';
+            
+            // إظهار زر الخطوة التالية
+            const actionBtn = document.getElementById('quiz-action-btn');
+            if (quizCurrentIndex < quizData.length - 1) {
+                actionBtn.innerHTML = `السؤال التالي <i class="fa-solid fa-chevron-left"></i>`;
+            } else {
+                actionBtn.innerHTML = `عرض النتيجة النهائية <i class="fa-solid fa-square-poll-vertical"></i>`;
+            }
+            actionBtn.style.display = 'flex';
+        }
+
+        function nextQuizQuestion() {
+            if (quizCurrentIndex < quizData.length - 1) {
+                quizCurrentIndex++;
+                buildQuizUI();
+            } else {
+                // عرض شاشة النتيجة النهائية بالكامل
+                document.getElementById('quiz-playground').style.display = 'none';
+                document.getElementById('quiz-result-screen').style.display = 'flex';
+                document.getElementById('quiz-score-display').textContent = `${quizScore} / ${quizData.length}`;
+            }
+        }
+
+        function restartQuiz() {
+            quizCurrentIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-playground').style.display = 'block';
+            document.getElementById('quiz-result-screen').style.display = 'none';
+            buildQuizUI();
+        }
+
+        // التشغيل المبدئي للحقيبة التدريبية بأكملها
+        window.onload = function() {
+            updateSlideUI();
+        }
+    </script>
+</body>
+</html>
