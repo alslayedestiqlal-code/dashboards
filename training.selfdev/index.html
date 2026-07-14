@@ -1,1 +1,899 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أدوات ذكية لتدريب مستدام - أهمية التدريب المستدام ودوره في التطوير الشخصي</title>
+    <!-- استيراد خطوط Google Fonts وتحديداً خط "التاج وال" الأكاديمي والمهني -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                            emerald: '#059669',
+                            slate: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
 
+        body {
+            background-color: #0f172a; /* خلفية داكنة راقية لإبراز لوحة العرض */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+
+        /* حاوية العرض التقديمي الرئيسية المتجاوبة بالكامل لتناسب Teams والإطارات المدمجة */
+        #presentation-wrapper {
+            width: 100%;
+            height: 100vh;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            #presentation-wrapper {
+                height: 90vh;
+                max-height: 850px;
+                min-height: 600px;
+                border-radius: 16px;
+                border: 1px solid #334155;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* تخصيص أشرطة التمرير لضمان ثبات العناصر وتوافقها مع المحتوى الطويل */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* حركات الانتقال السلسة بين الشرائح */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* تحديد مساحة المحتوى القابل للتمرير داخل الشريحة لمنع اقتطاع النصوص */
+        .slide-content-scroll {
+            height: calc(100% - 90px);
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-wrapper" class="max-w-7xl">
+        
+        <!-- شريط علوي للشاشات الصغيرة لعرض زر القائمة المنزلقة وتسهيل التنقل داخل Teams -->
+        <div class="md:hidden bg-slate-900 text-white h-[60px] flex justify-between items-center px-4 border-b border-slate-800 flex-shrink-0 z-10">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-sky-400 text-lg"></i>
+                <span class="text-xs font-bold">أدوات ذكية لتدريب مستدام</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-slate-100 bg-slate-800 p-2 rounded-lg hover:bg-slate-700 transition-colors" title="عرض القائمة">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- خلفية داكنة لتغطية المحتوى عند فتح القائمة المنزلقة على الهواتف -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 z-20 transition-opacity"></div>
+
+        <!-- الهيكل الداخلي للمحتوى واللوحة الجانبية -->
+        <div id="main-body" class="flex flex-grow h-[calc(100%-130px)] md:h-[calc(100%-70px)] relative overflow-hidden">
+            
+            <!-- لوحة التنقل الجانبية المتجاوبة وتحتوي على جميع العناوين الرئيسية والفرعية -->
+            <div id="sidebar" class="absolute md:relative top-0 right-0 h-full w-[280px] md:w-[300px] bg-slate-900 border-l border-slate-800 flex flex-col p-5 text-slate-100 z-30 flex-shrink-0 transition-transform duration-300 transform translate-x-full md:translate-x-0">
+                <div class="logo-area hidden md:flex items-center gap-3 mb-6 pb-4 border-b border-slate-800 flex-shrink-0">
+                    <i class="fa-solid fa-hourglass-half text-sky-400 text-2xl animate-pulse"></i>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-400">البرنامج التدريبي</h3>
+                        <h3 class="text-sm font-bold text-white">أدوات ذكية لتدريب مستدام</h3>
+                    </div>
+                </div>
+                
+                <!-- قائمة المحاور مع تجميع الشرائح وأشرطة التمرير التلقائية لمنع القطع -->
+                <ul class="nav-menu flex flex-col gap-1.5 flex-grow overflow-y-auto custom-scrollbar pr-1 text-sm">
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(0)">
+                        <i class="fa-solid fa-house text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">الرئيسية</span>
+                    </li>
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(1)">
+                        <i class="fa-solid fa-star text-sky-500 w-5 text-center"></i> 
+                        <span>المقدمة والأثر التدريبي</span>
+                    </li>
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white" onclick="goToSlide(2)">
+                        <i class="fa-solid fa-compass text-sky-500 w-5 text-center"></i> 
+                        <span>دوره في التطوير الشخصي</span>
+                    </li>
+                    
+                    <!-- قسم خطوات وتطبيقات التدريب المستدام -->
+                    <div class="text-[11px] text-slate-500 font-bold uppercase mt-2 px-3 tracking-wider flex-shrink-0">أركان ومحاور التنمية الشخصية</div>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(3)">
+                        <i class="fa-solid fa-shuffle text-sky-500 w-4 text-center"></i> 
+                        <span>1. التكيّف مع التغيرات المتسارعة</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(4)">
+                        <i class="fa-solid fa-briefcase text-sky-500 w-4 text-center"></i> 
+                        <span>2. تحسين المهارات المهنية</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(5)">
+                        <i class="fa-solid fa-shield-heart text-sky-500 w-4 text-center"></i> 
+                        <span>3. تنمية الثقة بالنفس والذات</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(6)">
+                        <i class="fa-solid fa-brain text-sky-500 w-4 text-center"></i> 
+                        <span>4. توسيع الآفاق الفكرية والنقدية</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(7)">
+                        <i class="fa-solid fa-face-smile text-sky-500 w-4 text-center"></i> 
+                        <span>5. تحقيق الرضا الشخصي والشغف</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(8)">
+                        <i class="fa-solid fa-heart-pulse text-sky-500 w-4 text-center"></i> 
+                        <span>6. دعم وتعزيز الصحة العقلية</span>
+                    </li>
+                    <li class="nav-item p-2 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white text-xs mr-2" onclick="goToSlide(9)">
+                        <i class="fa-solid fa-globe text-sky-500 w-4 text-center"></i> 
+                        <span>7. المساهمة في التنمية المستدامة</span>
+                    </li>
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white mt-1" onclick="goToSlide(10)">
+                        <i class="fa-solid fa-square-check text-sky-500 w-5 text-center"></i> 
+                        <span>الخلاصة واستثمار الذات</span>
+                    </li>
+
+                    <li class="nav-item p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white mt-2" onclick="goToSlide(11)">
+                        <i class="fa-solid fa-clipboard-question text-sky-500 w-5 text-center"></i> 
+                        <span class="font-semibold">التقييم المعرفي الذاتي</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- منفذ عرض الشرائح التفاعلي المرن والداعم لإيماءات اللمس والسحب -->
+            <div id="slide-viewport" class="flex-grow relative bg-slate-50 overflow-hidden">
+
+                <!-- الشريحة 0: الشريحة الافتتاحية للمحتوى الجديد -->
+                <div class="slide flex flex-col justify-between p-6 md:p-12 bg-slate-900 text-white active">
+                    <div class="flex justify-between items-center flex-shrink-0">
+                        <span class="bg-sky-500/10 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold border border-sky-500/20">
+                            أدوات ذكية لتدريب مستدام
+                        </span>
+                    </div>
+                    <div class="my-auto text-right max-w-4xl overflow-y-auto custom-scrollbar pr-2 py-4">
+                        <span class="text-xs md:text-sm font-bold text-sky-400 uppercase tracking-wider block mb-2">المحور التعليمي والتنموي</span>
+                        <h1 class="text-2xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
+                            أهمية التدريب المستدام ودوره <br class="hidden md:inline">
+                            <span class="text-sky-400 bg-clip-text">في التطوير الشخصي</span>
+                        </h1>
+                        <p class="text-slate-400 text-xs md:text-sm leading-relaxed max-w-2xl mb-6">
+                            الاستثمار الحقيقي والنوعي في بناء قدرات الأفراد لتمكينهم من التكيّف بمرونة واستدامة مع الطفرات التكنولوجية المتسارعة والمساهمة الفعالة في رفعة مجتمعاتهم.
+                        </p>
+                        <div class="flex gap-4">
+                            <button onclick="nextSlide()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-sky-500/20 transition-all text-xs md:text-sm flex items-center gap-2">
+                                ابدأ العرض التفاعلي <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-800 pt-4 flex flex-col md:flex-row justify-between text-[10px] md:text-xs text-slate-500 gap-2 flex-shrink-0">
+                        <span>أهمية التدريب المستدام ودوره في التطوير الشخصي</span>
+                        <span>مخرجات التنمية البشرية والتمكين الأكاديمي المستدام © 2026</span>
+                    </div>
+                </div>
+
+                <!-- الشريحة 1: المقدمة -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">المقدمة والأثر التدريبي</h2>
+                        <p class="text-xs md:text-sm text-slate-500">منهجية دمج التدريب وبناء الإنسان في العصر الرقمي المتسارع.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <p class="text-sm md:text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    في عالم يتسم بالتغير السريع والتطور المستمر، أصبح التدريب المستدام ضرورة ملحة لا غنى عنها لكل متطلع لمواكبة الغد وصناعة الأثر الميداني الفعال.
+                                </p>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-rotate text-sky-600 mt-1 flex-shrink-0"></i>
+                                        <span><strong>التكيّف التام مع المتغيرات:</strong> فالتعلم المستمر لا يقتصر فقط على اكتساب المهارات والمعرفة، بل يتجاوز ذلك ليكون أداة فعالة لتعزيز القدرة على التكيف مع التغيرات المتلاحقة في سوق العمل والمجتمع.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <!-- رسمة SVG معبرة للغاية عن الساعة الرملية والتدريب المستمر المقتبس من مراجع المحتوى -->
+                                <svg class="w-40 h-40 text-sky-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 2: دور التدريب في التطوير الشخصي -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">دوره في التطوير الشخصي</h2>
+                        <p class="text-xs md:text-sm text-slate-500">كيف يسهم التدريب المستمر في إعادة تشكيل وبناء الهوية المهنية والشخصية للفرد.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <p class="text-sm md:text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    من خلال التدريب، يتمكن الأفراد من تحسين مهاراتهم المهنية، وزيادة ثقتهم بأنفسهم، وتوسيع آفاقهم الفكرية والعملية بصورة غير مسبوقة.
+                                </p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex items-start gap-2">
+                                        <i class="fa-solid fa-people-arrows text-emerald-600 mt-1"></i>
+                                        <span><strong>تعزيز العلاقات الاجتماعية:</strong> يسهم في الاندماج وبناء قنوات تفاعل تزيد الرضا وتحقق أهداف الذات.</span>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex items-start gap-2">
+                                        <i class="fa-solid fa-tree text-emerald-600 mt-1"></i>
+                                        <span><strong>بناء مجتمعات مستدامة:</strong> الأفراد المتطورون هم النواة الحقيقية لتطور المؤسسات والمجتمعات ككل.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-emerald-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 3: التكيّف مع التغيرات -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">1. التكيّف مع التغيرات المتسارعة</h2>
+                        <p class="text-xs md:text-sm text-slate-500">أدوات الاستجابة الحيوية للتحديات التكنولوجية والاقتصادية والاجتماعية المعاصرة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">استجابة ديناميكية للتغيرات السريعة:</h5>
+                                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                            يساعد التدريب المستدام الأفراد بذكاء على التكيف مع التحولات التكنولوجية الكبرى والاقتصادية والاجتماعية المعاصرة. في عالم سريع التغير، يصبح تعلم المهارات الجديدة وتجاوز الأطر القديمة مهارة بقاء أساسية وركيزة للاستقرار المهني والاجتماعي.
+                                        </p>
+                                    </div>
+                                    <div class="border-r-4 border-emerald-600 pr-3 bg-emerald-50/50 p-3 rounded">
+                                        <h5 class="font-bold text-emerald-950 text-xs md:text-sm">الهدف الرئيسي للتكيف:</h5>
+                                        <p class="text-xs text-emerald-900 mt-1 font-medium leading-relaxed">الحفاظ على التنافسية والإنتاجية العالية في سوق العمل المتطلب والمفتوح على الابتكارات التكنولوجية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-sky-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3M3 12c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M3 12l-3 3m3-3 3 3" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 4: تحسين المهارات المهنية -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">2. تحسين وتطوير المهارات المهنية</h2>
+                        <p class="text-xs md:text-sm text-slate-500">توسيع الآفاق الوظيفية وبناء الميزة التنافسية المستمرة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">تعزيز فرص العمل الشاملة:</h5>
+                                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                            من خلال التركيز المتواصل على اكتساب حزم مهارية جديدة ومواكبة للمهنة، يصبح الأفراد أكثر تنافسية وثباتاً في بيئاتهم المؤسسية.
+                                        </p>
+                                    </div>
+                                    <div class="border-r-4 border-amber-500 pr-3 bg-amber-50/50 p-2.5 rounded">
+                                        <h5 class="font-bold text-amber-950 text-xs md:text-sm">الترقي والنمو المهني:</h5>
+                                        <p class="text-xs text-amber-900 mt-1 leading-relaxed">فتح أبواب ومسارات جديدة للترقي القيادي والمهني من خلال المواءمة الدائمة للقدرات الذاتية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-amber-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 .414-.336.75-.75.75H4.5a.75.75 0 0 1-.75-.75V14.15M20.25 14.15a15.003 15.003 0 0 0-4.859-3.023M20.25 14.15c.49-.117.75-.585.75-1.033v-1.617c0-.448-.26-.916-.75-1.033m-16.5 3.68c-.49-.117-.75-.585-.75-1.033v-1.617c0-.448.26-.916.75-1.033m0 3.68v4.25c0 .414.336.75.75.75H19.5c.414 0 .75-.336.75-.75V14.15M3.75 14.15A15.003 15.003 0 0 1 8.61 11.13m4.89-3.63a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm0 0H18m0 0a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 5: تنمية الثقة بالنفس -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">3. تنمية الثقة بالنفس والقدرات الذاتية</h2>
+                        <p class="text-xs md:text-sm text-slate-500">حلقات الإنجاز المبرهن وأثر التعلم على تعزيز المرونة الشخصية.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <p class="text-sm md:text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    التدريب المستدام يساهم بشكل جوهري وحاسم في بناء الثقة بالنفس من خلال تحقيق الأهداف واكتساب كفاءة الأداء.
+                                </p>
+                                <ul class="space-y-3 text-xs md:text-sm text-slate-600">
+                                    <li class="flex items-start gap-3 bg-white p-3 rounded-lg shadow-sm">
+                                        <i class="fa-solid fa-trophy text-amber-500 mt-1 flex-shrink-0"></i>
+                                        <span><strong>الشعور بالإنجاز المعرفي:</strong> عندما ينجح الأفراد بنشاط في تعلم وفهم وتوظيف مهارات جديدة، يشعرون بالرضا والقيمة، مما يعزز تلقائياً ثقتهم في تجاوز التحديات القادمة.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-amber-400 animate-bounce" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.173-.418.766-.418.939 0l1.96 4.721c.068.163.224.276.4.3L19.9 9.176c.451.058.63.606.303.921l-3.8 3.69c-.126.122-.183.298-.152.474l.9 5.021c.08.452-.379.784-.782.56l-4.52-2.38a.596.596 0 0 0-.528 0l-4.52 2.38c-.403.224-.862-.108-.782-.56l.9-5.021c.03-.176-.026-.352-.152-.474L2.8 10.097c-.327-.315-.148-.863.303-.921l5.122-.656c.176-.024.332-.137.4-.3l1.96-4.72Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 6: توسيع الآفاق الفكرية -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">4. توسيع الآفاق الفكرية والنقدية</h2>
+                        <p class="text-xs md:text-sm text-slate-500">تمكين العقل من تحليل المواقف المعقدة وتقبل الرؤى المتنوعة والمبتكرة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-indigo-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">تنمية أساليب التفكير النقدي:</h5>
+                                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                            يساعد التدريب الأكاديمي والمهني المستمر في توسيع آفاق الأفراد الفكرية من خلال تمكينهم من الاطلاع بمرونة على وجهات نظر جديدة وأفكار علمية متنوعة.
+                                        </p>
+                                    </div>
+                                    <div class="border-r-4 border-emerald-600 pr-3 bg-emerald-50/50 p-2.5 rounded">
+                                        <h5 class="font-bold text-emerald-950 text-xs md:text-sm">القدرة على حل المشكلات المعقدة:</h5>
+                                        <p class="text-xs text-emerald-900 mt-1 leading-relaxed">إرساء منهجيات التحليل والتقييم واتخاذ القرار المدروس القائم على البراهين الموضوعية والمنطقية.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-indigo-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.467 5.99 5.99 0 0 0-1.925 3.546 5.974 5.974 0 0 1-2.133-1A3.75 3.75 0 0 0 12 18Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v4.25a.75.75 0 0 0 1.5 0V6ZM12.75 14a.75.75 0 0 0-1.5 0v1a.75.75 0 0 0 1.5 0v-1Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 7: تحقيق الرضا الشخصي -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">5. تحقيق الرضا الشخصي وتنمية الشغف</h2>
+                        <p class="text-xs md:text-sm text-slate-500">التكامل الفردي المبرهن بين الشغف واكتساب المعرفة المستدامة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">استكشاف الاهتمامات الكامنة والشغف:</h5>
+                                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                            يتيح التدريب المنهجي المستدام للأفراد فرصة حقيقية لاستكشاف مجالات علمية وعملية مبتكرة تلبي شغفهم وتطلعاتهم المعرفية وتتسق مع أهدافهم الحياتية.
+                                        </p>
+                                    </div>
+                                    <div class="border-r-4 border-emerald-600 pr-3 bg-emerald-50/50 p-2 rounded">
+                                        <h5 class="font-bold text-emerald-950 text-xs md:text-sm">الأثر النفسي الإيجابي:</h5>
+                                        <p class="text-xs text-emerald-900 mt-1 leading-relaxed">تنمية الفاعلية الذاتية والإحساس المستمر بالتميز والاستحقاق المعرفي الميداني.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-emerald-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 8: دعم الصحة العقلية -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">6. دعم وتعزيز الصحة العقلية</h2>
+                        <p class="text-xs md:text-sm text-slate-500">العلاقة الجوهرية بين التعلم مدى الحياة والنشاط العصبي الذهني.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">تحفيز خلايا الدماغ والنشاط العصبي:</h5>
+                                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                            التعلم المستمر يحفز الدماغ بصفة دورية ويحافظ على مرونته العصبية، مما يقلل بشكل ملموس من مخاطر التدهور العقلي أو التراجع الذهني المرتبط بتقدم العمر.
+                                        </p>
+                                    </div>
+                                    <div class="border-r-4 border-rose-600 pr-3 bg-rose-50/50 p-2.5 rounded">
+                                        <h5 class="font-bold text-rose-950 text-xs md:text-sm">الوقاية وتعزيز الاستقرار النفسي:</h5>
+                                        <p class="text-xs text-rose-900 mt-1 leading-relaxed">المساهمة في خفض مستويات التوتر والقلق اليومي من خلال التبصر وإعمال آليات التفكير الواعي المتزن.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-rose-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 9: المساهمة في التنمية المستدامة -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">7. المساهمة في التنمية المستدامة والبيئية</h2>
+                        <p class="text-xs md:text-sm text-slate-500">نقل المعرفة والأثر الإيجابي لتأسيس مجتمعات متمكنة ومرنة.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-3">
+                                    <div class="border-r-4 border-sky-600 pr-3">
+                                        <h5 class="font-bold text-slate-900 text-xs md:text-sm">الأثر البنّاء والمستمر على المجتمع:</h5>
+                                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                            الأفراد المتعلمون والمدربون بشكل مستمر يمتلكون قدرة استثنائية على قيادة التغيير في مجتمعاتهم ومؤسساتهم من خلال نقل المعرفة وتوطين الخبرات.
+                                        </p>
+                                    </div>
+                                    <div class="border-r-4 border-emerald-600 pr-3 bg-emerald-50/50 p-2 rounded">
+                                        <h5 class="font-bold text-emerald-950 text-xs md:text-sm">المسؤولية الاجتماعية والتنموية:</h5>
+                                        <p class="text-xs text-emerald-900 mt-1 leading-relaxed">المشاركة الإيجابية والواعية في الأنشطة المجتمعية الفعالة بما يخدم أهداف التنمية والازدهار المعرفي.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-emerald-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A11.952 11.952 0 0 1 12 16.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 3 12c0-.778.1-1.533.284-2.253m0 0A11.952 11.952 0 0 0 12 10.5c2.998 0 5.74 1.1 7.843 2.918" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 10: الخلاصة واستثمار الذات -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">الخلاصة واستثمار الذات</h2>
+                        <p class="text-xs md:text-sm text-slate-500">التدريب المستدام كاستثمار استراتيجي بعيد المدى في رأس المال البشري.</p>
+                    </div>
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7 flex flex-col gap-4 text-slate-700 leading-relaxed text-xs md:text-sm">
+                                <p class="text-sm md:text-base text-slate-900 font-semibold bg-sky-50 p-4 rounded-lg border-r-4 border-sky-500">
+                                    التدريب المستدام ليس مجرد عملية روتينية لاكتساب مهارات معزولة، بل هو استثمار استراتيجي مستمر في الذات يحسن جودة الحياة ويرسم ملامح التميز القيادي للفرد.
+                                </p>
+                                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-2">
+                                    <h5 class="font-bold text-slate-900 text-xs md:text-sm">المستهدفات طويلة المدى:</h5>
+                                    <ul class="list-disc pr-5 text-xs text-slate-600 space-y-1">
+                                        <li>مواكبة المرونة العصبية وتحفيز وتنشيط خلايا الدماغ باستمرار.</li>
+                                        <li>فتح آفاق ومسارات وظيفية واعدة مع تعزيز روح المساهمة الفردية والتطوعية لرفعة وتنمية المجتمع.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 rounded-xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0 bg-white p-4 flex justify-center items-center">
+                                <svg class="w-40 h-40 text-sky-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A5.906 5.906 0 0 1 12 3.493a5.907 5.907 0 0 1 6.851 5.84c0 .28-.018.558-.053.83m-15.48 0H12m0 0h6.141M12 10.511a22.25 22.25 0 1 1 0 1.956M12 10.511v3.447" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex-shrink-0">البرنامج التدريبي: أدوات ذكية لتدريب مستدام</div>
+                </div>
+
+                <!-- الشريحة 11: التقييم المعرفي الذاتي والتفاعلي للمدربين والمتدربين -->
+                <div class="slide p-6 md:p-10 flex flex-col justify-between">
+                    <div class="slide-header border-r-4 border-sky-600 pr-4 flex-shrink-0">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-800">التقييم المعرفي الذاتي</h2>
+                        <p class="text-xs md:text-sm text-slate-500">اختبار تفاعلي لقياس استيعاب أهم ركائز ومكتسبات التدريب المستدام في التطوير الشخصي.</p>
+                    </div>
+                    
+                    <div class="slide-content-scroll pr-2 py-4 custom-scrollbar">
+                        <!-- واجهة السؤال النشط -->
+                        <div id="quiz-playground" class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full animate-pulse" id="quiz-progress-badge">السؤال 1 من 3</span>
+                                <div class="w-24 md:w-32 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div id="quiz-progress-bar" class="bg-sky-600 h-full w-1/3 transition-all duration-300"></div>
+                                </div>
+                            </div>
+
+                            <div class="quiz-question text-xs md:text-sm lg:text-base font-bold text-slate-800 mb-4" id="quiz-question-text">
+                                السؤال الأول: كيف يؤثر التدريب والتعلم المستدام على نشاط الدماغ مع تقدم الأفراد في العمر؟
+                            </div>
+
+                            <div class="quiz-options flex flex-col gap-3" id="quiz-options-container">
+                                <!-- سيتم بناؤها ديناميكياً بجافا سكريبت لتسهيل تعدد الأسئلة وصيانتها -->
+                            </div>
+
+                            <!-- منطقة التغذية الراجعة والتقدم -->
+                            <div class="quiz-feedback mt-4 p-4 rounded-lg hidden text-xs md:text-sm font-semibold flex items-center gap-2" id="quiz-feedback-box"></div>
+                            
+                            <div class="flex justify-end mt-4">
+                                <button id="quiz-action-btn" onclick="nextQuizQuestion()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 hidden shadow transition-all">
+                                    السؤال التالي <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- لوحة النتائج النهائية للمتدرب -->
+                        <div id="quiz-result-screen" class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm text-center hidden flex flex-col items-center justify-center gap-4">
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl md:text-3xl mb-2">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-slate-800">تهانينا! لقد أكملت تقييم المحور بنجاح</h3>
+                            <p class="text-slate-600 text-xs md:text-sm max-w-md">أداؤك يعكس مدى تمكنك وعلمك بمرتكزات وأهمية التدريب المستدام في إعادة صياغة وبناء مهارات التطوير الشخصي والمهني.</p>
+                            <div class="bg-slate-50 border border-slate-200 py-3 px-8 rounded-lg my-2">
+                                <span class="text-[10px] text-slate-400 block font-semibold">درجتك النهائية:</span>
+                                <span class="text-2xl md:text-3xl font-extrabold text-sky-600" id="quiz-score-display">0 / 3</span>
+                            </div>
+                            <button onclick="restartQuiz()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center gap-2 transition-all">
+                                إعادة المحاولة <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-[10px] md:text-xs text-slate-400 border-t border-slate-200 pt-3 flex justify-between flex-shrink-0">
+                        <span>أدوات ذكية لتدريب مستدام</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- شريط التحكم والتنقل السفلي الثابت للحقيبة التدريبية -->
+        <div id="bottom-navbar" class="h-[70px] bg-slate-900 border-t border-slate-800 flex justify-between items-center px-4 md:px-8 z-15 flex-shrink-0">
+            <!-- زر الرئيسية مصمم بشكل واضح ومتجاوب في الجهة اليمنى (بجوار عداد الشرائح) -->
+            <div class="flex items-center gap-3">
+                <button class="bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all shadow" title="الصفحة الرئيسية" onclick="goToSlide(0)">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="hidden sm:inline">الرئيسية</span>
+                </button>
+                <div class="slide-counter text-slate-400 text-[11px] md:text-xs font-bold tracking-wide" id="slide-counter">الشريحة 1 من 12</div>
+            </div>
+            
+            <!-- أزرار التنقل (التالي والسابق) مجمعة بجانب بعضها مباشرة لسهولة التنقل -->
+            <div class="flex items-center gap-2">
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="prev-btn" onclick="prevSlide()">
+                    <i class="fa-solid fa-arrow-right"></i> <span>السابق</span>
+                </button>
+                <button class="nav-btn bg-slate-800 hover:bg-sky-600 text-slate-100 border border-slate-700 hover:border-sky-600 px-4 md:px-5 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 md:gap-2 transition-all disabled:opacity-30 disabled:pointer-events-none" id="next-btn" onclick="nextSlide()">
+                    <span>التالي</span> <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- جافا سكريبت التفاعلية لإدارة حالة العرض والأسئلة والتحكم بالشرائح -->
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const sidebarItems = document.querySelectorAll('.nav-item');
+        const slideCounter = document.getElementById('slide-counter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        let sidebarOpen = false;
+
+        // إدارة فتح وإغلاق لوحة التنقل الجانبية على الهواتف والأجهزة اللوحية المدمجة
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebarOpen) {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+                sidebarOpen = false;
+            } else {
+                sidebar.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                sidebarOpen = true;
+            }
+        }
+
+        // خريطة تحديث القائمة الجانبية بالاعتماد على فهرس الشريحة النشطة بدقة لمنع الالتباس
+        const slideToMenuMap = {
+            0: 0,   // الرئيسية
+            1: 1,   // المقدمة والأثر التدريبي
+            2: 2,   // دوره في التطوير الشخصي
+            3: 3,   // التكيف مع التغيرات المتسارعة
+            4: 4,   // تحسين المهارات المهنية
+            5: 5,   // تنمية الثقة بالنفس والذات
+            6: 6,   // توسيع الآفاق الفكرية والنقدية
+            7: 7,   // تحقيق الرضا الشخصي والشغف
+            8: 8,   // دعم وتعزيز الصحة العقلية
+            9: 9,   // المساهمة في التنمية المستدامة
+            10: 10, // الخلاصة واستثمار الذات
+            11: 11  // التقييم المعرفي الذاتي
+        };
+
+        function updateSlideUI() {
+            // تحديث إظهار وإخفاء الشرائح
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                    // إعادة ضبط موضع التمرير في محتوى الشريحة لأعلى لضمان عدم الاقتطاع
+                    const scrollContainer = slide.querySelector('.slide-content-scroll');
+                    if (scrollContainer) scrollContainer.scrollTop = 0;
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // تحديث العنصر النشط في القائمة الجانبية
+            sidebarItems.forEach(item => {
+                item.classList.remove('bg-sky-600', 'text-white', 'font-bold');
+                item.classList.add('text-slate-400');
+            });
+
+            const activeMenuItemIndex = slideToMenuMap[currentSlide];
+            if(sidebarItems[activeMenuItemIndex]) {
+                sidebarItems[activeMenuItemIndex].classList.add('bg-sky-600', 'text-white', 'font-bold');
+                sidebarItems[activeMenuItemIndex].classList.remove('text-slate-400');
+            }
+
+            // تحديث شريط الحالة السفلي والأعداد
+            slideCounter.textContent = `الشريحة ${currentSlide + 1} من ${totalSlides}`;
+            
+            // إدارة تعطيل وتمكين أزرار التنقل في النهايات والبدايات
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            // في حال الانتقال إلى شريحة الأسئلة يتم تصفير التقييم للبدء من جديد بنشاط
+            if (currentSlide === 11) {
+                restartQuiz();
+            }
+        }
+
+        function nextSlide() {
+            if(currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlideUI();
+            }
+        }
+
+        function prevSlide() {
+            if(currentSlide > 0) {
+                currentSlide--;
+                updateSlideUI();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlideUI();
+            // إغلاق تلقائي للقائمة المنزلقة عند اختيار شريحة في الهواتف
+            if (sidebarOpen) {
+                toggleSidebar();
+            }
+        }
+
+        // دعم السحب باللمس للأجهزة الذكية (Swipe Gestures)
+        let touchstartX = 0;
+        let touchendX = 0;
+        const gestureZone = document.getElementById('slide-viewport');
+
+        gestureZone.addEventListener('touchstart', function(event) {
+            touchstartX = event.changedTouches[0].screenX;
+        }, false);
+
+        gestureZone.addEventListener('touchend', function(event) {
+            touchendX = event.changedTouches[0].screenX;
+            handleGesture();
+        }, false);
+
+        function handleGesture() {
+            // وبما أن الاتجاه RTL (من اليمين لليسار)
+            if (touchendX < touchstartX - 50) {
+                nextSlide(); // سحب لليسار يذهب للشريحة التالية
+            }
+            if (touchendX > touchstartX + 50) {
+                prevSlide(); // سحب لليمين يذهب للشريحة السابقة
+            }
+        }
+
+        // دعم مفاتيح الأسهم للوحة المفاتيح
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                nextSlide();
+            } else if (event.key === 'ArrowRight') {
+                prevSlide();
+            }
+        });
+
+        // هيكل أسئلة التقييم التفاعلي المطور والمنهجي لأهمية التدريب المستدام
+        const quizData = [
+            {
+                question: "السؤال الأول: ما هو الأثر الطبي والذهني المباشر لممارسة التعلم المستمر على الدماغ عند التقدم في العمر؟",
+                options: [
+                    { text: "أ) تحفيز خلايا الدماغ والمحافظة على مرونته لتقليص مخاطر التدهور العقلي.", isCorrect: true, feedback: "إجابة ممتازة ومثالية! نعم، التعلم المستمر يحفز الدماغ ويقيه من أعراض التراجع الذهني." },
+                    { text: "ب) إيقاد وتشتيت التركيز بسبب التراكم الزائد للمعلومات والبيانات المعقدة.", isCorrect: false, feedback: "خاطئ؛ فالأبحاث تؤكد دور التدريب في تنظيم وإثراء المدارك الذهنية وليس تشتيتها." },
+                    { text: "ج) تراجع القدرة على التكيف الاجتماعي والاستقرار العام." , isCorrect: false, feedback: "غير صحيح؛ بل يعزز دمج المهارات من الروابط الاجتماعية والتفاعل الفعال." }
+                ]
+            },
+            {
+                question: "السؤال الثاني: كيف يسهم اكتساب مهارات جديدة عبر التدريب المستمر في دعم المسار المهني للفرد؟",
+                options: [
+                    { text: "أ) يزيد من مستويات التنافسية ويسهل الترقي المهني وفتح آفاق عمل جديدة.", isCorrect: true, feedback: "صحيح ورائع! صقل الكفاءات يمنح الفرد ميزة واضحة تؤهله لفرص وظيفية واعدة." },
+                    { text: "ب) يؤدي غالباً إلى تجميد المسار المهني وثبات الفرص لعدم التخصص.", isCorrect: false, feedback: "خاطئ؛ فالتدريب المستمر هو جوهر الارتقاء والترقي الوظيفي." },
+                    { text: "ج) يقلل بالكلية من الحوجة لتبادل ومشاركة المعرفة مع الآخرين.", isCorrect: false, feedback: "غير صحيح؛ فالمهتم بالتعلم يسعى لمشاركة وتبادل معارفه لبناء بيئة مهنية متكاملة." }
+                ]
+            },
+            {
+                question: "السؤال الثالث: بم تصف الورقة العلمية والأكاديمية مفهوم (التدريب المستدام) بالنسبة للأفراد والمجتمع؟",
+                options: [
+                    { text: "أ) استثمار مستمر وبعيد المدى في الذات يرفع جودة الحياة ويسهم في بناء المجتمع.", isCorrect: true, feedback: "إجابة صحيحة بالكامل! التدريب المستدام هو استثمار نوعي يرقى بمستويات الفرد ويدعم التنمية المجتمعية الشاملة." },
+                    { text: "ب) ممارسة كمالية مقتصرة على فئات وقطاعات مهنية دقيقة ومحددة بالدولة.", isCorrect: false, feedback: "غير صحيح؛ فالتعلم مدى الحياة ضرورة ملحة لكافة فئات سوق العمل ومكونات المجتمع." },
+                    { text: "ج) مجرد أداة لإطالة زمن التعليم الأكاديمي والتحصيل النظري الصرف.", isCorrect: false, feedback: "خاطئ؛ فهو يدمج بين التطبيق المهني وتنمية الشغف والتفكير النقدي البناء." }
+                ]
+            }
+        ];
+
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+
+        function buildQuizUI() {
+            const currentQ = quizData[quizCurrentIndex];
+            
+            // تحديث شريط التقدم والعدادات
+            document.getElementById('quiz-progress-badge').textContent = `السؤال ${quizCurrentIndex + 1} من ${quizData.length}`;
+            const percentWidth = ((quizCurrentIndex + 1) / quizData.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${percentWidth}%`;
+
+            // تحديث نص السؤال
+            document.getElementById('quiz-question-text').textContent = currentQ.question;
+
+            // بناء الخيارات ديناميكياً
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option-btn w-full text-right p-3.5 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-medium text-slate-700 transition-all text-xs lg:text-sm flex justify-between items-center";
+                btn.textContent = opt.text;
+                btn.onclick = () => selectQuizOption(btn, opt);
+                optionsContainer.appendChild(btn);
+            });
+
+            // إخفاء التغذية الراجعة وزر الخطوة التالية
+            document.getElementById('quiz-feedback-box').className = 'quiz-feedback mt-4 p-4 rounded-lg hidden text-sm font-semibold flex items-center gap-2';
+            document.getElementById('quiz-feedback-box').style.display = 'none';
+            document.getElementById('quiz-action-btn').style.display = 'none';
+        }
+
+        function selectQuizOption(selectedBtn, optionData) {
+            const allOptionButtons = document.querySelectorAll('.quiz-option-btn');
+            
+            // تعطيل الضغط الإضافي لمنع الاختيار المتكرر
+            allOptionButtons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            
+            if(optionData.isCorrect) {
+                quizScore++;
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-base md:text-lg"></i> <span>${optionData.feedback}</span>`;
+            } else {
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-300');
+                selectedBtn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'font-bold');
+                
+                feedbackBox.className = "quiz-feedback mt-4 p-4 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 bg-rose-50 text-rose-800 border border-rose-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-base md:text-lg"></i> <span>${optionData.feedback}</span>`;
+
+                // تمييز الخيار الصحيح للمتدرب لتوضيحه له علمياً وأكاديمياً
+                allOptionButtons.forEach((btn, index) => {
+                    if(quizData[quizCurrentIndex].options[index].isCorrect) {
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                    }
+                });
+            }
+
+            feedbackBox.style.display = 'flex';
+            
+            // إظهار زر الخطوة التالية أو النتيجة الكلية
+            const actionBtn = document.getElementById('quiz-action-btn');
+            if (quizCurrentIndex < quizData.length - 1) {
+                actionBtn.innerHTML = `السؤال التالي <i class="fa-solid fa-chevron-left"></i>`;
+            } else {
+                actionBtn.innerHTML = `عرض النتيجة النهائية <i class="fa-solid fa-square-poll-vertical"></i>`;
+            }
+            actionBtn.style.display = 'flex';
+        }
+
+        function nextQuizQuestion() {
+            if (quizCurrentIndex < quizData.length - 1) {
+                quizCurrentIndex++;
+                buildQuizUI();
+            } else {
+                // عرض شاشة النتيجة النهائية بالكامل وتعديل الواجهات
+                document.getElementById('quiz-playground').style.display = 'none';
+                document.getElementById('quiz-result-screen').style.display = 'flex';
+                document.getElementById('quiz-score-display').textContent = `${quizScore} / ${quizData.length}`;
+            }
+        }
+
+        function restartQuiz() {
+            quizCurrentIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-playground').style.display = 'block';
+            document.getElementById('quiz-result-screen').style.display = 'none';
+            buildQuizUI();
+        }
+
+        // التشغيل المبدئي للحقيبة التدريبية بأكملها
+        window.onload = function() {
+            updateSlideUI();
+        }
+    </script>
+</body>
+</html>
